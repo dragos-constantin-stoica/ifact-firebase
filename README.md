@@ -1,2 +1,3 @@
 # ifact-firebase
-Invoicing application working of Google Firebase build with Webix
+
+Invoicing application working on Google Firebase build with Webix.
