@@ -162,10 +162,10 @@ function loadData(id) {
     switch (id) {
         case "1":
             //supplier form
-            var promise_pg1 = webix.ajax(SERVER_URL + DBNAME + LOAD_URL[id]);
+            //var promise_pg1 = webix.ajax(SERVER_URL + DBNAME + LOAD_URL[id]);
             //serii facturi form
-            var promise_pg1_sf = webix.ajax(SERVER_URL + DBNAME + "/INVOICE_CFG");
-
+            //var promise_pg1_sf = webix.ajax(SERVER_URL + DBNAME + "/INVOICE_CFG");
+/*
             webix.promise.all([promise_pg1, promise_pg1_sf]).then(function(realdata) {
                 //success
                 //We expect one single supplier
@@ -178,6 +178,24 @@ function loadData(id) {
                 //error
                 webix.message({ type: "error", text: err.responseText });
                 console.log(err);
+            });
+
+*/
+            webix.firestore.collection("supplier").get().then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    console.log(doc.data());
+                    $$("supplierForm").setValues(doc.data());
+                $$("conturi").clearAll();
+                $$("conturi").parse($$("supplierForm").getValues().conturi);
+                $$("conturi").refresh();
+                });
+            });
+
+            webix.firestore.collection("invoice_cfg").get().then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    console.log(doc.data());
+                    $$("seriifacturiForm").setValues(doc.data(), true);
+                });
             });
             break;
         case "2":

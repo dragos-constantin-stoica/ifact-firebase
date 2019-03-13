@@ -328,12 +328,11 @@ var supplier = {
 
     ui: {
         id: "page-1",
-        cols:[                   
+        rows:[                   
             {
                 view: "form",
                 id: "supplierForm",
                 scroll: 'y',
-                width: 800,
                 elementsConfig:{ labelWidth: 180 },
                 elements:[
                         {template:"Date Furnizor", type:"section"},
@@ -387,18 +386,24 @@ var supplier = {
             {
                 view: "form",
                 id: "seriifacturiForm",
-                autowidth: true,
-                elementsConfig:{ labelWidth: 180, minWidth:300 },
+                //elementsConfig:{ labelWidth: 180 },
                 elements:[
-                    {template:"Serii facturi", type:"section"},
-                    { view:"text", label:"SERIA:", placeholder:"Seria", name:"SERIA"},
-                    { view:"counter", label:"NUMARUL:", step:1, min:0, name:"NUMARUL"},
-                    { view:"button", label:"SAVE", type:"danger", align:"center", click:'supplier.saveseriifacturi'},
-                    { template:"Export/Import date ", type:"section"},
-                    { view:"button", type:"iconButton", icon:"file-excel-o", label:"Export Finacial Statement to Excel", click:'supplier.export'},
-                    { view:"button", type:"iconButton", icon:"download",  label:"Export Entities to JSON", click:'supplier.exportJSON'},
-                    { view:"button", type:"iconButton", icon:"upload",  label:"Import Entities from JSON", click:'supplier.importJSON'},
-                    { view:"button", type:"iconButton", icon:"cloud", label:"Cloud Sync", click:'supplier.sync'}
+                    { view:"fieldset", label:"Serii facturi", body:{
+                        rows:[
+                            { view:"text", label:"SERIA:", placeholder:"Seria", name:"SERIA"},
+                            { view:"counter", label:"NUMARUL:", step:1, min:0, name:"NUMARUL"},
+                            { view:"button", label:"SAVE", type:"danger", width:100, align:"center", click:'supplier.saveseriifacturi'}
+                        ]}
+                    },
+                    { view:"fieldset", label:"Export/Import date", body:{
+                        rows:[
+                            { view:"button", type:"iconButton", icon:"fas fa-file-excel", label:"Export Finacial Statement to Excel", click:'supplier.export'},
+                            { view:"button", type:"iconButton", icon:"fas fa-download",  label:"Export Entities to JSON", click:'supplier.exportJSON'},
+                            { view:"button", type:"iconButton", icon:"fas fa-upload",  label:"Import Entities from JSON", click:'supplier.importJSON'},
+                            { view:"button", type:"iconButton", icon:"fas fa-cloud", label:"Cloud Sync", click:'supplier.sync'}
+                        ]}
+                    }
+                    
                 ]
             }
         ]

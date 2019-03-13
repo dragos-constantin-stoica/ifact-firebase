@@ -28,7 +28,8 @@ var myApp = {
     ui: {
         id: "mainLayout",
         view: "layout",
-        rows: [{
+        rows: [
+            {
                 view: "toolbar",
                 id: "toolbar",
                 elements: [{
@@ -58,11 +59,11 @@ var myApp = {
                 view: "multiview",
                 cells: [
                     supplier.ui,
-                    customers.ui,
+                    //customers.ui,
                     //contracts.ui,
-                    invoice.ui,
-                    payments.ui,
-                    dashboard.ui()
+                    //invoice.ui,
+                    //payments.ui,
+                    //dashboard.ui()
                 ],
                 fitBiggest: true
             }
@@ -72,11 +73,11 @@ var myApp = {
 
     views: [
         supplier.ui,
-        customers.ui,
+        //customers.ui,
         //contracts.ui,
-        invoice.ui,
-        payments.ui,
-        dashboard.ui
+        //invoice.ui,
+        //payments.ui,
+        //dashboard.ui
     ],
 
     sidemenu: {

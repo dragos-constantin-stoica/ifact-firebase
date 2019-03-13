@@ -67,6 +67,10 @@
             messagingSenderId: "75292245332"
         };
         firebase.initializeApp(config);
+        //var db = firebase.firestore();
+        //create firebase connection, and assign it to webix
+        webix.firestore = firebase.firestore();
+        
     </script>
 
     <script>
@@ -104,6 +108,7 @@
                     */
                     webix.i18n.parseFormat = "%d.%m.%Y";
                     webix.i18n.setLocale();
+
                     webix.ready(function() {
                         myApp.init();
                     });
