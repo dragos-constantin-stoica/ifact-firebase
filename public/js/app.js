@@ -59,6 +59,7 @@ var myApp = {
                 view: "multiview",
                 cells: [
                     supplier.ui,
+                    config.ui,
                     //customers.ui,
                     //contracts.ui,
                     //invoice.ui,
@@ -73,6 +74,7 @@ var myApp = {
 
     views: [
         supplier.ui,
+        config.ui,
         //customers.ui,
         //contracts.ui,
         //invoice.ui,
@@ -101,7 +103,9 @@ var myApp = {
                 //{id: 3, value: "Contracts", icon: "fas fa-briefcase"},
                 { id: 4, value: "Invoice", icon: "fas fa-calculator" },
                 { id: 5, value: "Payments", icon: "fab fa-bitcoin" },
-                { id: 6, value: "Dashboard", icon: "fas fa-chart-line" }
+                { id: 6, value: "Dashboard", icon: "fas fa-chart-line" },
+                { id: 7, value: "Config", icon: "fas fa-wrench" }
+
             ],
             select: true,
             type: {

@@ -66,6 +66,7 @@ function preprocess(id) {
         case "3":
         case "4":
         case "5":
+        case "7":
             //rebiuld the view
             //webix.ui(myApp.views[parseInt(id,10)-1], $$("mainPage"), $$("page-"+id));
             loadData(id);
@@ -299,6 +300,9 @@ function loadData(id) {
                 webix.message({ type: "error", text: err });
                 console.log(err);
             });
+            break;
+        case "7":
+
             break;
         default:
             break;
