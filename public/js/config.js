@@ -1,12 +1,12 @@
 var config = {
 
-    
-    export: function () {
+
+    export: function() {
 
         var promise_xls = webix.ajax(SERVER_URL + DBNAME + "/_design/globallists/_list/toxls/charts/export2Excel");
 
         promise_xls
-            .then(function (realdata) {
+            .then(function(realdata) {
                 //success
                 /* original data */
                 var data = realdata.json();
@@ -40,7 +40,7 @@ var config = {
                     type: "application/octet-stream"
                 }), "financialstatement.xlsx");
 
-            }).fail(function (err) {
+            }).fail(function(err) {
                 //error
                 webix.message({
                     type: "error",
@@ -50,16 +50,16 @@ var config = {
             });
     },
 
-    exportJSON: function () {
+    exportJSON: function() {
         var promise_exportJSON = webix.ajax(SERVER_URL + DBNAME + "/_design/globallists/_list/exportJSON/config/exportJSON");
 
         promise_exportJSON
-            .then(function (realdata) {
+            .then(function(realdata) {
                 saveAs(new Blob([JSON.stringify(realdata.json(), 2)], {
                     type: "application/json"
                 }), "iFact_EXPORT.json");
             })
-            .fail(function (err) {
+            .fail(function(err) {
                 //error
                 webix.message({
                     type: "error",
@@ -69,7 +69,7 @@ var config = {
             });
     },
 
-    importJSON: function () {
+    importJSON: function() {
         //New import window
         webix.ui({
             view: "window",
@@ -103,12 +103,12 @@ var config = {
                 view: "button",
                 label: "Process JSON",
                 type: "form",
-                click: function () {
+                click: function() {
                     var file_id = $$("files").files.getFirstId(); //getting the ID
                     var fileobj = $$("files").files.getItem(file_id).file; //getting file object
                     //console.log(fileobj);
                     reader = new FileReader();
-                    reader.onloadend = function () {
+                    reader.onloadend = function() {
                         var raw_data = JSON.parse(reader.result);
                         //save data in the database - keep _id as provided
                         var bulk_doc = [];
@@ -123,12 +123,12 @@ var config = {
                         webix.ajax().header({
                             "Content-type": "application/json"
                         }).post(SERVER_URL + DBNAME + "/_bulk_docs", JSON.stringify(doc),
-                            function (text, data, xhr) {
+                            function(text, data, xhr) {
                                 var result = {
                                     ok: 0,
                                     err: 0
                                 };
-                                data.json().forEach(function (element) {
+                                data.json().forEach(function(element) {
                                     if (typeof element.ok !== 'undefined') {
                                         result.ok++;
                                     } else {
@@ -154,7 +154,7 @@ var config = {
                 multiple: false,
                 autosend: false, //!important
                 on: {
-                    onBeforeFileAdd: function (item) {
+                    onBeforeFileAdd: function(item) {
                         var type = item.type.toLowerCase(); //deriving file extension
                         if (type != "json") { //checking the format
                             webix.message("Only JSON files!");
@@ -172,120 +172,20 @@ var config = {
         ]
     },
 
-    syncForm: {
-        view: "form",
-        id: "syncForm",
-        minWidth: 400,
-        elementsConfig: {
-            labelWidth: 100
-        },
-        elements: [{
-                view: "text",
-                name: "src",
-                label: "Source:",
-                placeholder: "http(s)://user:password@local.server:port/databse"
-            },
-            {
-                view: "text",
-                name: "dest",
-                label: "Destination:",
-                placeholder: "http(s)://user:password@remote.server:port/databse"
-            },
-            {
-                view: "button",
-                type: "form",
-                label: "Send to Heavens!",
-                click: function () {
-                    var doc = {
-                        source: $$("syncForm").getValues().src,
-                        target: $$("syncForm").getValues().dest
-                    };
-                    webix.ajax()
-                        .header({
-                            "Content-type": "application/json",
-                            "Accept": "application/json"
-                        })
-                        .post(SERVER_URL + "_replicate", JSON.stringify(doc))
-                        .then(
-                            function (realdata) {
-                                webix.message(realdata.text());
-                                console.log(realdata.json());
-                            }
-                        )
-                        .fail(
-                            function (err) {
-                                webix.message({
-                                    type: "error",
-                                    text: err.responseText
-                                });
-                                console.log(err);
-                            }
-                        );
-                }
-            }
-        ]
-    },
-
-    sync: function () {
-        webix.ui({
-            view: "window",
-            id: "syncwindow",
-            width: 400,
-            position: "top",
-            head: {
-                view: "toolbar",
-                cols: [{
-                        view: "label",
-                        label: "Sync local to remote"
-                    },
-                    {
-                        view: "button",
-                        type: "icon",
-                        icon: "times-circle-o",
-                        width: 32,
-                        align: 'right',
-                        click: "$$('syncwindow').close();"
-                    }
-                ]
-            },
-            body: webix.copy(supplier.syncForm)
-        }).show();
-    },
-
-    saveseriifacturi: function () {
+    saveseriifacturi: function() {
         var doc = $$("seriifacturiForm").getValues();
-        doc.doctype = "INVOICE_CFG";
+        doc.uid = USERNAME.getUSERNAME().uid;
 
-        if (typeof doc._id !== 'undefined') {
+        //Save document to Firebase
 
-            webix.ajax().header({
-                "Content-type": "application/json"
-            }).post(SERVER_URL + DBNAME + "/_design/config/_update/sn/" + doc._id, JSON.stringify(doc),
-                function (text, data, xhr) {
-                    webix.message("Informatia despre seria si numarul a fost salvata cu succes!");
-                    var msg = data.json();
-                    if ('action' in msg) {
-                        msg.doc._rev = xhr.getResponseHeader('X-Couch-Update-NewRev'); //setting _rev property and value for it
-                        $$('seriifacturiForm').setValues(msg.doc, true);
-                    }
-                }
-            );
-        } else {
-            webix.ajax().header({
-                "Content-type": "application/json"
-            }).post(SERVER_URL + DBNAME + "/_design/config/_update/sn/", JSON.stringify(doc),
-                function (text, data, xhr) {
-                    webix.message("Informatia despre seria si numarul a fost salvata cu succes!");
-                    var msg = data.json();
-                    if ('action' in msg) {
-                        msg.doc._id = xhr.getResponseHeader('X-Couch-Id');
-                        msg.doc._rev = xhr.getResponseHeader('X-Couch-Update-NewRev'); //setting _rev property and value for it
-                        $$('seriifacturiForm').setValues(msg.doc, true);
-                    }
-                }
-            );
-        }
-
+        // Add a new document in collection "cities"
+        webix.firestore.collection("invoice_cfg").doc("serialNumber").set(doc)
+            .then(function() {
+                console.log("Document successfully written!");
+            })
+            .catch(function(error) {
+                console.error("Error writing document: ", error);
+            });
     },
 
     ui: {
@@ -294,73 +194,64 @@ var config = {
             view: "form",
             id: "seriifacturiForm",
             elementsConfig: {
-                labelWidth: 180
+                labelWidth: 180,
+                labelAlign: "right"
             },
-            elements: [{
-                    view: "fieldset",
-                    label: "Serii facturi",
-                    body: {
-                        rows: [{
-                                view: "text",
-                                label: "SERIA:",
-                                placeholder: "Seria",
-                                name: "SERIA"
-                            },
-                            {
-                                view: "counter",
-                                label: "NUMARUL:",
-                                step: 1,
-                                min: 0,
-                                name: "NUMARUL"
-                            },
-                            {
-                                view: "button",
-                                label: "SAVE",
-                                type: "danger",
-                                //width: 100,
-                                align: "center",
-                                click: 'config.saveseriifacturi'
-                            }
-                        ]
-                    }
-                },
+            elements: [
+
                 {
                     view: "fieldset",
-                    label: "Export/Import date",
+                    label: "Serii Facturi",
                     body: {
-                        rows: [{
-                                view: "button",
-                                type: "iconButton",
-                                icon: "fas fa-file-excel",
-                                label: "Export Finacial Statement to Excel",
-                                click: 'config.export'
-                            },
-                            {
-                                view: "button",
-                                type: "iconButton",
-                                icon: "fas fa-download",
-                                label: "Export Entities to JSON",
-                                click: 'config.exportJSON'
-                            },
-                            {
-                                view: "button",
-                                type: "iconButton",
-                                icon: "fas fa-upload",
-                                label: "Import Entities from JSON",
-                                click: 'config.importJSON'
-                            },
-                            {
-                                view: "button",
-                                type: "iconButton",
-                                icon: "fas fa-cloud",
-                                label: "Cloud Sync",
-                                click: 'config.sync'
-                            }
-                        ]
+                        cols: [{
+                            view: "text",
+                            label: "SERIA:",
+                            placeholder: "Seria",
+                            name: "SERIA"
+                        }, {
+                            view: "counter",
+                            label: "NUMARUL:",
+                            step: 1,
+                            min: 0,
+                            name: "NUMARUL"
+                        }, {
+                            view: "button",
+                            label: "SAVE",
+                            type: "danger",
+                            width: 100,
+                            align: "center",
+                            click: 'config.saveseriifacturi'
+                        }]
+                    }
+                },
+
+                {
+                    view: "fieldset",
+                    label: "Export/Import Date",
+                    body: {
+                        cols: [{
+                            view: "button",
+                            type: "iconButton",
+                            icon: "fas fa-file-excel",
+                            label: "Export Finacial Statement to Excel",
+                            click: 'config.export'
+                        }, {
+                            view: "button",
+                            type: "iconButton",
+                            icon: "fas fa-download",
+                            label: "Export Entities to JSON",
+                            click: 'config.exportJSON'
+                        }, {
+                            view: "button",
+                            type: "iconButton",
+                            icon: "fas fa-upload",
+                            label: "Import Entities from JSON",
+                            click: 'config.importJSON'
+                        }]
                     }
                 }
 
             ]
         }]
     }
-}
+};

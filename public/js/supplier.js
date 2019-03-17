@@ -1,37 +1,18 @@
 var supplier = {
-    save: function () {
+    save: function() {
         var doc = $$("supplierForm").getValues();
         doc.conturi = [];
-        $$("conturi").data.each(function (obj) {
+        $$("conturi").data.each(function(obj) {
             var cpy = webix.copy(obj);
             delete cpy.id;
             doc.conturi.push(cpy);
         });
-        if (typeof doc.INVOICE_CFG !== 'undefined') delete doc.INVOICE_CFG;
         if (typeof doc.submit !== 'undefined') delete doc.submit;
 
-        doc.doctype = "SUPPLIER";
-        //console.log(doc);
-        $.couch.db(DBNAME).saveDoc(doc, {
-            success: function (data) {
-                //console.log(data);
-                $$('supplierForm').setValues({
-                    _id: data.id,
-                    _rev: data.rev
-                }, true);
-                webix.message("Datele firmei au fost salvate cu succes!");
-            },
-            error: function (status) {
-                console.log(status);
-                webix.message({
-                    type: "error",
-                    text: status
-                });
-            }
-        });
+
     },
 
-    edit: function (id, e) {
+    edit: function(id, e) {
         var item_id = $$('conturi').locate(e);
         webix.ui({
             view: "window",
@@ -45,14 +26,14 @@ var supplier = {
         $$('conturiform').setValues($$('conturi').getItem(item_id));
     },
 
-    delete: function (id, e) {
+    delete: function(id, e) {
         var item_id = $$('conturi').locate(e);
         $$('conturi').remove(item_id);
         $$('conturi').refresh();
         webix.message("Bank Account Deleted Successfully!");
     },
 
-    add: function () {
+    add: function() {
         webix.ui({
             view: "window",
             id: "conturiwindow",
@@ -113,7 +94,7 @@ var supplier = {
                 view: "button",
                 label: "Save",
                 type: "form",
-                click: function () {
+                click: function() {
                     if (!this.getParentView().validate()) {
                         webix.message({
                             type: "error",

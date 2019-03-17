@@ -163,41 +163,16 @@ function loadData(id) {
     switch (id) {
         case "1":
             //supplier form
-            //var promise_pg1 = webix.ajax(SERVER_URL + DBNAME + LOAD_URL[id]);
-            //serii facturi form
-            //var promise_pg1_sf = webix.ajax(SERVER_URL + DBNAME + "/INVOICE_CFG");
-/*
-            webix.promise.all([promise_pg1, promise_pg1_sf]).then(function(realdata) {
-                //success
-                //We expect one single supplier
-                $$("supplierForm").setValues((realdata[0].json())[0]);
-                $$("conturi").clearAll();
-                $$("conturi").parse($$("supplierForm").getValues().conturi);
-                $$("conturi").refresh();
-                $$("seriifacturiForm").setValues(realdata[1].json(), true);
-            }).fail(function(err) {
-                //error
-                webix.message({ type: "error", text: err.responseText });
-                console.log(err);
-            });
-
-*/
             webix.firestore.collection("supplier").get().then((querySnapshot) => {
                 querySnapshot.forEach((doc) => {
                     console.log(doc.data());
                     $$("supplierForm").setValues(doc.data());
-                $$("conturi").clearAll();
-                $$("conturi").parse($$("supplierForm").getValues().conturi);
-                $$("conturi").refresh();
+                    $$("conturi").clearAll();
+                    $$("conturi").parse($$("supplierForm").getValues().conturi);
+                    $$("conturi").refresh();
                 });
             });
 
-            webix.firestore.collection("invoice_cfg").get().then((querySnapshot) => {
-                querySnapshot.forEach((doc) => {
-                    console.log(doc.data());
-                    $$("seriifacturiForm").setValues(doc.data(), true);
-                });
-            });
             break;
         case "2":
             //Customers and contract form
@@ -285,7 +260,7 @@ function loadData(id) {
                 $$("y2m_ron").parse(realdata[0].json());
                 $$("y2m_eur").parse(realdata[0].json());
                 //setup finalcial statement
-                var raw_data = realdata[1].json()
+                var raw_data = realdata[1].json();
                 $$("financialStatementY2D").setValues({
                     invoicedRONY2D: raw_data.invoicedRON,
                     dueRONY2D: raw_data.dueRON,
@@ -302,7 +277,12 @@ function loadData(id) {
             });
             break;
         case "7":
-
+            webix.firestore.collection("invoice_cfg").get().then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    console.log(doc.data());
+                    $$("seriifacturiForm").setValues(doc.data(), true);
+                });
+            });
             break;
         default:
             break;
