@@ -1,14 +1,14 @@
-var config = {
+var configuration = {
 
 
     export: function() {
-
+        /*
         var promise_xls = webix.ajax(SERVER_URL + DBNAME + "/_design/globallists/_list/toxls/charts/export2Excel");
 
         promise_xls
             .then(function(realdata) {
                 //success
-                /* original data */
+                // original data
                 var data = realdata.json();
                 var ws_name = "Invoices";
 
@@ -21,7 +21,7 @@ var config = {
                 var wb = new Workbook(),
                     ws = XLSX.utils.aoa_to_sheet(data);
 
-                /* add worksheet to workbook */
+                // add worksheet to workbook
                 wb.SheetNames.push(ws_name);
                 wb.Sheets[ws_name] = ws;
                 var wbout = XLSX.write(wb, {
@@ -48,9 +48,11 @@ var config = {
                 });
                 console.log(err);
             });
+        */
     },
 
     exportJSON: function() {
+        /*
         var promise_exportJSON = webix.ajax(SERVER_URL + DBNAME + "/_design/globallists/_list/exportJSON/config/exportJSON");
 
         promise_exportJSON
@@ -67,9 +69,11 @@ var config = {
                 });
                 console.log(err);
             });
+        */
     },
 
     importJSON: function() {
+        /*
         //New import window
         webix.ui({
             view: "window",
@@ -94,8 +98,9 @@ var config = {
             },
             body: webix.copy(supplier.importJSONForm)
         }).show();
+        */
     },
-
+/*
     importJSONForm: {
         view: "form",
         id: "importJSON",
@@ -171,7 +176,7 @@ var config = {
             }
         ]
     },
-
+*/
     saveseriifacturi: function() {
         var doc = $$("seriifacturiForm").getValues();
         doc.uid = USERNAME.getUSERNAME().uid;
@@ -220,7 +225,7 @@ var config = {
                             type: "danger",
                             width: 100,
                             align: "center",
-                            click: 'config.saveseriifacturi'
+                            click: 'configuration.saveseriifacturi'
                         }]
                     }
                 },
@@ -234,19 +239,19 @@ var config = {
                             type: "iconButton",
                             icon: "fas fa-file-excel",
                             label: "Export Finacial Statement to Excel",
-                            click: 'config.export'
+                            click: 'configuration.export'
                         }, {
                             view: "button",
                             type: "iconButton",
                             icon: "fas fa-download",
                             label: "Export Entities to JSON",
-                            click: 'config.exportJSON'
+                            click: 'configuration.exportJSON'
                         }, {
                             view: "button",
                             type: "iconButton",
                             icon: "fas fa-upload",
                             label: "Import Entities from JSON",
-                            click: 'config.importJSON'
+                            click: 'configuration.importJSON'
                         }]
                     }
                 }

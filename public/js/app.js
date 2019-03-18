@@ -2,14 +2,14 @@
 var myApp = {
 
     init: function() {
-        myApp.showUI();
-        /*
+        //myApp.showUI();
+        
 		if(USERNAME.getUSERNAME()){
             myApp.showUI();
 		}else{
 			logic.login();
         }
-        */
+        
     },
 
     showUI: function() {
@@ -59,7 +59,7 @@ var myApp = {
                 view: "multiview",
                 cells: [
                     supplier.ui,
-                    config.ui,
+                    configuration.ui,
                     //customers.ui,
                     //contracts.ui,
                     //invoice.ui,
@@ -74,7 +74,7 @@ var myApp = {
 
     views: [
         supplier.ui,
-        config.ui,
+        configuration.ui,
         //customers.ui,
         //contracts.ui,
         //invoice.ui,

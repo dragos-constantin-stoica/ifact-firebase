@@ -30,20 +30,6 @@ webix.protoUI({ name: 'activeList' },
 
 /**
  * 
- * URL for loading JSON arrays for each view
- * 
- */
-var LOAD_URL = {
-    1: "/_design/globallists/_list/toja/supplier/getsupplier",
-    2: "/_design/globallists/_list/toja/customer/getcustomer",
-    3: "",
-    4: "/INVOICE_CFG",
-    5: "/_design/globallists/_list/payments/invoice/getinvoicestatement?include_docs=true",
-    6: ""
-};
-
-/**
- * 
  * Date formatting function
  * 
  */
@@ -75,6 +61,8 @@ function preprocess(id) {
         case "6":
             //find the number of series and setup legend
             //chart data for y2m
+
+            /*
             var promise_pg6_y2m = webix.ajax(SERVER_URL + DBNAME + "/_design/globallists/_list/y2m/charts/y2d");
 
             promise_pg6_y2m.then(function(realdata) {
@@ -140,6 +128,7 @@ function preprocess(id) {
                 webix.message({ type: "error", text: err });
                 console.log(err);
             });
+            */
             break;
 
         default:
@@ -186,6 +175,7 @@ function loadData(id) {
             break;
         case "4":
             //Invoice form
+            /*
             var promise_pg4 = webix.ajax(SERVER_URL + DBNAME + LOAD_URL[id]);
             promise_pg4.then(function(realdata) {
                 //success
@@ -201,9 +191,11 @@ function loadData(id) {
                 webix.message({ type: "error", text: err });
                 console.log(err);
             });
+            */
             break;
         case "5":
             //Payments
+            /*
             var promise_pg5 = webix.ajax(SERVER_URL + DBNAME + LOAD_URL[id]);
             promise_pg5.then(function(realdata) {
                 //clear all lists
@@ -247,8 +239,10 @@ function loadData(id) {
                 webix.message({ type: "error", text: err });
                 console.log(err);
             });
+            */
             break;
         case "6":
+            /*
             //chart data for y2m
             var promise_pg6_y2m = webix.ajax(SERVER_URL + DBNAME + "/_design/globallists/_list/y2m/charts/y2d");
             //data for financialSummary
@@ -275,6 +269,7 @@ function loadData(id) {
                 webix.message({ type: "error", text: err });
                 console.log(err);
             });
+            */
             break;
         case "7":
             webix.firestore.collection("invoice_cfg").get().then((querySnapshot) => {

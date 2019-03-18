@@ -8,8 +8,6 @@ var supplier = {
             doc.conturi.push(cpy);
         });
         if (typeof doc.submit !== 'undefined') delete doc.submit;
-
-
     },
 
     edit: function(id, e) {
