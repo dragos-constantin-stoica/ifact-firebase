@@ -1,4 +1,5 @@
 var supplier = {
+
     save: function() {
         var doc = $$("supplierForm").getValues();
         doc.conturi = [];
@@ -8,18 +9,42 @@ var supplier = {
             doc.conturi.push(cpy);
         });
         if (typeof doc.submit !== 'undefined') delete doc.submit;
+
+        //Check if the document is new
+        if (webix.isUndefined(doc.uid) || webix.isUndefined(doc.doc_id)) {
+            var newdoc = webix.firestore.collection("supplier").doc();
+            doc.doc_id = newdoc.id;
+            doc.uid = USERNAME.getUSERNAME().uid;
+            $$("supplierForm").setValues(doc, true);
+            newdoc.set(doc);
+            webix.message("Supplier successfully created!");
+        } else {
+            // Update document in collection
+            webix.firestore.collection("supplier").doc(doc.doc_id).set(doc)
+                .then(function() {
+                    webix.message("Supplier successfully updated!");
+                    console.log("Document successfully written!");
+                })
+                .catch(function(error) {
+                    console.error("Error writing document: ", error);
+                });
+        }
     },
 
     edit: function(id, e) {
         var item_id = $$('conturi').locate(e);
-        webix.ui({
-            view: "window",
-            id: "conturiwindow",
-            width: 400,
-            position: "top",
-            head: "Administrare Conturi Bancare",
-            body: webix.copy(supplier.conturiForm)
-        }).show();
+        if (webix.isUndefined($$('conturiwindow'))) {
+            webix.ui({
+                view: "window",
+                id: "conturiwindow",
+                width: 400,
+                position: "top",
+                head: "Administrare Conturi Bancare",
+                body: webix.copy(supplier.conturiForm)
+            }).show();
+        } else {
+            $$('conturiwindow').show();
+        }
         $$('conturiform').clear();
         $$('conturiform').setValues($$('conturi').getItem(item_id));
     },
@@ -32,14 +57,19 @@ var supplier = {
     },
 
     add: function() {
-        webix.ui({
-            view: "window",
-            id: "conturiwindow",
-            width: 400,
-            position: "top",
-            head: "Administrare Conturi Bancare",
-            body: webix.copy(supplier.conturiForm)
-        }).show();
+        if (webix.isUndefined($$('conturiwindow'))) {
+
+            webix.ui({
+                view: "window",
+                id: "conturiwindow",
+                width: 400,
+                position: "top",
+                head: "Administrare Conturi Bancare",
+                body: webix.copy(supplier.conturiForm)
+            }).show();
+        } else {
+            $$('conturiwindow').show();
+        }
         $$('conturiform').clear();
         $$('conturiform').setValues({
             "id": "new"
@@ -188,7 +218,7 @@ var supplier = {
                                         id: "deleteButtonId",
                                         view: "button",
                                         type: "icon",
-                                        icon: "trash-o",
+                                        icon: "wxi-trash",
                                         width: 32,
                                         click: "supplier.delete"
                                     },
@@ -196,7 +226,7 @@ var supplier = {
                                         id: "editButtonId",
                                         view: "button",
                                         type: "icon",
-                                        icon: "pencil-square-o",
+                                        icon: "wxi-pencil",
                                         width: 32,
                                         click: "supplier.edit"
                                     }
@@ -209,7 +239,7 @@ var supplier = {
                             {
                                 view: "button",
                                 type: "icon",
-                                icon: "plus-square",
+                                icon: "wxi-plus",
                                 label: "Add",
                                 width: 80,
                                 click: "supplier.add"

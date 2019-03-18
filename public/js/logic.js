@@ -13,12 +13,14 @@ var logic = {
             if (!webix.isUndefined($$('mainLayout'))) $$('mainLayout').destructor();
             if (!webix.isUndefined($$('sidemenu'))) $$('sidemenu').destructor();
             myApp.init();
+            location.reload(true);
         }).catch(function(error) {
             // An error happened.
             USERNAME.delUSERNAME();
             if (!webix.isUndefined($$('mainLayout'))) $$('mainLayout').destructor();
             if (!webix.isUndefined($$('sidemenu'))) $$('sidemenu').destructor();
             myApp.init();
+            location.reload(true);
         });
     }
 

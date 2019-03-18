@@ -100,97 +100,105 @@ var configuration = {
         }).show();
         */
     },
-/*
-    importJSONForm: {
-        view: "form",
-        id: "importJSON",
-        elements: [{
-                view: "button",
-                label: "Process JSON",
-                type: "form",
-                click: function() {
-                    var file_id = $$("files").files.getFirstId(); //getting the ID
-                    var fileobj = $$("files").files.getItem(file_id).file; //getting file object
-                    //console.log(fileobj);
-                    reader = new FileReader();
-                    reader.onloadend = function() {
-                        var raw_data = JSON.parse(reader.result);
-                        //save data in the database - keep _id as provided
-                        var bulk_doc = [];
-                        for (var key in raw_data) {
-                            bulk_doc = bulk_doc.concat(raw_data[key]);
-                        }
-                        //console.log(bulk_doc);
-                        var doc = {
-                            docs: bulk_doc,
-                            all_or_nothing: false
-                        };
-                        webix.ajax().header({
-                            "Content-type": "application/json"
-                        }).post(SERVER_URL + DBNAME + "/_bulk_docs", JSON.stringify(doc),
-                            function(text, data, xhr) {
-                                var result = {
-                                    ok: 0,
-                                    err: 0
-                                };
-                                data.json().forEach(function(element) {
-                                    if (typeof element.ok !== 'undefined') {
-                                        result.ok++;
-                                    } else {
-                                        result.err++;
-                                    }
-                                }, this);
-                                webix.message("Import results:<br/>" + result.ok + " OK<br/>" + result.err + " ERRORS!");
-                                console.log(data.json());
+    /*
+        importJSONForm: {
+            view: "form",
+            id: "importJSON",
+            elements: [{
+                    view: "button",
+                    label: "Process JSON",
+                    type: "form",
+                    click: function() {
+                        var file_id = $$("files").files.getFirstId(); //getting the ID
+                        var fileobj = $$("files").files.getItem(file_id).file; //getting file object
+                        //console.log(fileobj);
+                        reader = new FileReader();
+                        reader.onloadend = function() {
+                            var raw_data = JSON.parse(reader.result);
+                            //save data in the database - keep _id as provided
+                            var bulk_doc = [];
+                            for (var key in raw_data) {
+                                bulk_doc = bulk_doc.concat(raw_data[key]);
                             }
-                        );
-                    };
+                            //console.log(bulk_doc);
+                            var doc = {
+                                docs: bulk_doc,
+                                all_or_nothing: false
+                            };
+                            webix.ajax().header({
+                                "Content-type": "application/json"
+                            }).post(SERVER_URL + DBNAME + "/_bulk_docs", JSON.stringify(doc),
+                                function(text, data, xhr) {
+                                    var result = {
+                                        ok: 0,
+                                        err: 0
+                                    };
+                                    data.json().forEach(function(element) {
+                                        if (typeof element.ok !== 'undefined') {
+                                            result.ok++;
+                                        } else {
+                                            result.err++;
+                                        }
+                                    }, this);
+                                    webix.message("Import results:<br/>" + result.ok + " OK<br/>" + result.err + " ERRORS!");
+                                    console.log(data.json());
+                                }
+                            );
+                        };
 
-                    // Read in the JSON file as a binary string.
-                    reader.readAsText(fileobj, "UTF8");
-                }
-            },
-            {
-                view: "uploader",
-                id: "files",
-                name: "files",
-                value: "Add document",
-                link: "doclist",
-                multiple: false,
-                autosend: false, //!important
-                on: {
-                    onBeforeFileAdd: function(item) {
-                        var type = item.type.toLowerCase(); //deriving file extension
-                        if (type != "json") { //checking the format
-                            webix.message("Only JSON files!");
-                            return false;
+                        // Read in the JSON file as a binary string.
+                        reader.readAsText(fileobj, "UTF8");
+                    }
+                },
+                {
+                    view: "uploader",
+                    id: "files",
+                    name: "files",
+                    value: "Add document",
+                    link: "doclist",
+                    multiple: false,
+                    autosend: false, //!important
+                    on: {
+                        onBeforeFileAdd: function(item) {
+                            var type = item.type.toLowerCase(); //deriving file extension
+                            if (type != "json") { //checking the format
+                                webix.message("Only JSON files!");
+                                return false;
+                            }
                         }
                     }
+                },
+                {
+                    view: "list",
+                    scroll: false,
+                    id: "doclist",
+                    type: "uploader"
                 }
-            },
-            {
-                view: "list",
-                scroll: false,
-                id: "doclist",
-                type: "uploader"
-            }
-        ]
-    },
-*/
+            ]
+        },
+    */
     saveseriifacturi: function() {
         var doc = $$("seriifacturiForm").getValues();
-        doc.uid = USERNAME.getUSERNAME().uid;
+        //Check if the document is new
+        if (typeof doc.uid === 'undefined' || typeof doc.doc_id === 'undefined') {
+            var newdoc = webix.firestore.collection("invoice_cfg").doc();
+            doc.doc_id = newdoc.id;
+            doc.uid = USERNAME.getUSERNAME().uid;
+            $$("seriifacturiForm").setValues(doc, true);
+            newdoc.set(doc);
+            webix.message("Configuration successfully created!");
+        } else {
 
-        //Save document to Firebase
-
-        // Add a new document in collection "cities"
-        webix.firestore.collection("invoice_cfg").doc("serialNumber").set(doc)
-            .then(function() {
-                console.log("Document successfully written!");
-            })
-            .catch(function(error) {
-                console.error("Error writing document: ", error);
-            });
+            // Update document in collection
+            webix.firestore.collection("invoice_cfg").doc(doc.doc_id).set(doc)
+                .then(function() {
+                    webix.message("Configuration successfully updated!");
+                    console.log("Document successfully written!");
+                })
+                .catch(function(error) {
+                    console.error("Error writing document: ", error);
+                });
+        }
     },
 
     ui: {
@@ -229,7 +237,6 @@ var configuration = {
                         }]
                     }
                 },
-
                 {
                     view: "fieldset",
                     label: "Export/Import Date",

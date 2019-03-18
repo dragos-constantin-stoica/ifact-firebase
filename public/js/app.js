@@ -3,13 +3,13 @@ var myApp = {
 
     init: function() {
         //myApp.showUI();
-        
-		if(USERNAME.getUSERNAME()){
+
+        if (USERNAME.getUSERNAME()) {
             myApp.showUI();
-		}else{
-			logic.login();
+        } else {
+            logic.login();
         }
-        
+
     },
 
     showUI: function() {
@@ -28,8 +28,7 @@ var myApp = {
     ui: {
         id: "mainLayout",
         view: "layout",
-        rows: [
-            {
+        rows: [{
                 view: "toolbar",
                 id: "toolbar",
                 elements: [{
@@ -59,11 +58,11 @@ var myApp = {
                 view: "multiview",
                 cells: [
                     supplier.ui,
+                    customers.ui,
+                    contracts.ui,
+                    invoice.ui,
+                    payments.ui,
                     configuration.ui,
-                    //customers.ui,
-                    //contracts.ui,
-                    //invoice.ui,
-                    //payments.ui,
                     //dashboard.ui()
                 ],
                 fitBiggest: true
@@ -74,11 +73,11 @@ var myApp = {
 
     views: [
         supplier.ui,
+        customers.ui,
+        contracts.ui,
+        invoice.ui,
+        payments.ui,
         configuration.ui,
-        //customers.ui,
-        //contracts.ui,
-        //invoice.ui,
-        //payments.ui,
         //dashboard.ui
     ],
 
@@ -99,12 +98,12 @@ var myApp = {
             template: "<span class='webix_icon #icon#'></span> #value#",
             data: [
                 { id: 1, value: "Supplier", icon: "fas fa-anchor" },
-                { id: 2, value: "Clients & Contracts", icon: "fas fa-user-circle" },
-                //{id: 3, value: "Contracts", icon: "fas fa-briefcase"},
+                { id: 2, value: "Clients", icon: "fas fa-user-circle" },
+                { id: 3, value: "Contracts", icon: "fas fa-briefcase" },
                 { id: 4, value: "Invoice", icon: "fas fa-calculator" },
                 { id: 5, value: "Payments", icon: "fab fa-bitcoin" },
                 { id: 6, value: "Dashboard", icon: "fas fa-chart-line" },
-                { id: 7, value: "Config", icon: "fas fa-wrench" }
+                { id: 7, value: "Configuration", icon: "fas fa-wrench" }
 
             ],
             select: true,
