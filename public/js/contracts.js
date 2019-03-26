@@ -93,3 +93,111 @@ var contracts = {
     }
 
 };
+
+/*
+
+    contractForm: {
+            id: "contractForm",
+            view: "form",
+            width: 600,
+            elements: [{
+                    view: "text",
+                    name: "nume",
+                    label: "Nume",
+                    placeholder: "Numele societatii",
+                    labelWidth: 180,
+                    readonly: true
+                },
+                {
+                    view: "text",
+                    name: "contract",
+                    label: "Contract",
+                    placeholder: "Contract",
+                    labelWidth: 180
+                },
+                {
+                    view: "datepicker",
+                    stringResult: true,
+                    format: webix.Date.dateToStr("%d.%m.%Y"),
+                    date: new Date(),
+                    name: "start_date",
+                    label: "Data inceput",
+                    placeholder: "Data inceput",
+                    labelWidth: 180
+                },
+                {
+                    view: "datepicker",
+                    stringResult: true,
+                    format: webix.Date.dateToStr("%d.%m.%Y"),
+                    date: new Date(),
+                    name: "end_date",
+                    label: "Data incheiere",
+                    placeholder: "Data sfarsit",
+                    labelWidth: 180
+                },
+                {
+                    view: "textarea",
+                    name: "detalii",
+                    label: "Detalii",
+                    height: 140,
+                    labelPosition: "top",
+                    placeholder: "Detalii despre contract: facturare, rate etc"
+                },
+                {
+                    view: "button",
+                    value: "SAVE",
+                    click: function () {
+                        var result = $$("contractForm").getValues();
+                        if (result.id == "new") {
+                            //add new contract for this customer
+                            delete result.id;
+                            $$("customersContractsList").add(result, 0);
+                        } else {
+                            //update existing contract
+                            $$("customersContractsList").updateItem(result.id, result);
+                        }
+                        $$("customersContractsList").refresh();
+                        $$('newContractWindow').hide();
+                    }
+                }
+            ]
+
+        },
+
+        editContract: function (id, e) {
+            var item_id = $$('customersContractsList').locate(e);
+            webix.ui({
+                view: "window",
+                id: "newContractWindow",
+                width: 600,
+                position: "top",
+                head: "Contract nou",
+                body: webix.copy(customers.contractForm)
+            }).show();
+            $$('contractForm').clear();
+            $$('contractForm').setValues({
+                "doctype": "CONTRACT"
+            }, true);
+            $$('contractForm').setValues($$('customersContractsList').getItem(item_id), true);
+        },
+
+        newContract: function (id, e) {
+            var item_id = $$('customersList').locate(e);
+            webix.ui({
+                view: "window",
+                id: "newContractWindow",
+                width: 600,
+                position: "top",
+                head: "Contract nou",
+                body: webix.copy(customers.contractForm)
+            }).show();
+            $$('contractForm').clear();
+            $$('contractForm').setValues({
+                "id": "new",
+                "doctype": "CONTRACT",
+                "supplier_id": $$('customersList').getItem(item_id)._id,
+                "nume": $$('customersList').getItem(item_id).nume
+            }, true);
+        },
+
+*/

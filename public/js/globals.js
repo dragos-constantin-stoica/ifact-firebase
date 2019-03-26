@@ -18,6 +18,26 @@ var USERNAME = {
     }
 };
 
+/**
+ * 
+ * Sugar coating of message functions
+ */
+function msg(message) {
+    if (!webix.isUndefined(message.type)) {
+        if (message.type == "error" || message.type == "debug") {
+            console.log(message.text);
+        }
+    } else {
+        var tmp = {
+            text: message,
+            type: "info"
+        };
+        message = tmp;
+    }
+    webix.message(message);
+
+}
+
 
 /**
  * 
@@ -166,7 +186,7 @@ function loadData(id) {
         case "2":
             //Customers and contract form
             //data manipulation handled via proxy
-            $$("customersContractsList").filter("#supplier_id#", -1);
+            //$$("customersContractsList").filter("#supplier_id#", -1);
             break;
         case "3":
             //Contracts form

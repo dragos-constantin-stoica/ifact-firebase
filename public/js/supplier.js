@@ -31,8 +31,14 @@ var supplier = {
         }
     },
 
-    edit: function(id, e) {
-        var item_id = $$('conturi').locate(e);
+    edit: function() {
+        var item_id = $$('conturi').getSelectedId();
+
+        if (item_id.length == 0) {
+            msg({ text: "Please select an item from the list!", type: "error" });
+            return;
+        }
+
         if (webix.isUndefined($$('conturiwindow'))) {
             webix.ui({
                 view: "window",
@@ -49,11 +55,16 @@ var supplier = {
         $$('conturiform').setValues($$('conturi').getItem(item_id));
     },
 
-    delete: function(id, e) {
-        var item_id = $$('conturi').locate(e);
-        $$('conturi').remove(item_id);
-        $$('conturi').refresh();
-        webix.message("Bank Account Deleted Successfully!");
+    delete: function() {
+        var item_id = $$('conturi').getSelectedId();
+        if (item_id.length > 0) {
+            $$('conturi').remove(item_id);
+            $$('conturi').refresh();
+            msg({ text: "Bank Account Deleted Successfully!", type: "success" });
+        } else {
+            msg({ text: "Please select an item from the list!", type: "error" });
+        }
+
     },
 
     add: function() {
@@ -206,43 +217,45 @@ var supplier = {
                     label: "Conturi",
                     body: {
                         rows: [{
-                                view: "activeList",
+                                view: "list",
                                 autoheight: true,
                                 autowidth: true,
                                 id: "conturi",
                                 type: {
                                     height: 58
                                 },
-                                activeContent: {
-                                    deleteButton: {
-                                        id: "deleteButtonId",
+                                select: true,
+                                template: "<div style='overflow: hidden;float:left;'>Banca: #banca#, Sucursala: #sucursala#" +
+                                    "<br/>IBAN: #IBAN# SWIFT: #SWIFT# BIC: #BIC# [#valuta#]</div>"
+                            },
+                            {
+                                cols: [{
                                         view: "button",
                                         type: "icon",
-                                        icon: "wxi-trash",
-                                        width: 32,
-                                        click: "supplier.delete"
+                                        icon: "wxi-plus",
+                                        label: "Add",
+                                        width: 80,
+                                        click: "supplier.add"
                                     },
-                                    editButton: {
-                                        id: "editButtonId",
+                                    {
                                         view: "button",
                                         type: "icon",
                                         icon: "wxi-pencil",
-                                        width: 32,
+                                        label: "Edit",
+                                        width: 80,
                                         click: "supplier.edit"
+                                    },
+                                    {},
+                                    {
+                                        view: "button",
+                                        type: "icon",
+                                        icon: "wxi-trash",
+                                        label: "Delete",
+                                        width: 80,
+                                        click: "supplier.delete"
                                     }
-                                },
-                                template: "<div style='overflow: hidden;float:left;'>Banca: #banca#, Sucursala: #sucursala#" +
-                                    "<br/>IBAN: #IBAN# SWIFT: #SWIFT# BIC: #BIC# [#valuta#]</div>" +
-                                    "<div style='height: 50px; padding-left: 10px;padding-top:10px;float:right;'>{common.deleteButton()}</div>" +
-                                    "<div style='height: 50px; padding-left: 10px;padding-top:10px;float:right;'>{common.editButton()}</div>"
-                            },
-                            {
-                                view: "button",
-                                type: "icon",
-                                icon: "wxi-plus",
-                                label: "Add",
-                                width: 80,
-                                click: "supplier.add"
+                                ]
+
                             }
                         ]
                     }
