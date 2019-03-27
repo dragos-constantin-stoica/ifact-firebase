@@ -66,7 +66,7 @@ var customers = {
                     {
                         id: "customersForm",
                         view: "form",
-                        width: 600,
+                        //width: 600,
                         elementsConfig: {
                             labelWidth: 180,
                             minWidth: 300
@@ -130,21 +130,22 @@ var customers = {
 
                                     //Check if the document is new
                                     if (webix.isUndefined(doc.uid) || webix.isUndefined(doc.doc_id)) {
-                                        var newdoc = webix.firestore.collection("supplier").doc();
+                                        var newdoc = webix.firestore.collection("customer").doc();
+                                        doc.id = newdoc.id;
                                         doc.doc_id = newdoc.id;
                                         doc.uid = USERNAME.getUSERNAME().uid;
-                                        $$("supplierForm").setValues(doc, true);
-                                        newdoc.set(doc);
+                                        $$("customersForm").setValues(doc, true);
+                                        //newdoc.set(doc);
                                         $$('customersList').add(doc, 0);
                                         $$('customersList').refresh();
-                                        webix.message("Supplier successfully created!");
+                                        webix.message("Customer successfully created!");
                                     } else {
                                         // Update document in collection
-                                        webix.firestore.collection("supplier").doc(doc.doc_id).set(doc)
+                                        webix.firestore.collection("customer").doc(doc.doc_id).set(doc)
                                             .then(function() {
                                                 $$('customersList').updateItem(doc.doc_id, doc);
                                                 $$('customersList').refresh();
-                                                webix.message("Supplier successfully updated!");
+                                                webix.message("Customer successfully updated!");
                                                 console.log("Document successfully written!");
                                             })
                                             .catch(function(error) {
