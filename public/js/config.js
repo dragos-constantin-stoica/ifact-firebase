@@ -179,26 +179,8 @@ var configuration = {
     */
     saveseriifacturi: function() {
         var doc = $$("seriifacturiForm").getValues();
-        //Check if the document is new
-        if (typeof doc.uid === 'undefined' || typeof doc.doc_id === 'undefined') {
-            var newdoc = webix.firestore.collection("invoice_cfg").doc();
-            doc.doc_id = newdoc.id;
-            doc.uid = USERNAME.getUSERNAME().uid;
-            $$("seriifacturiForm").setValues(doc, true);
-            newdoc.set(doc);
-            webix.message("Configuration successfully created!");
-        } else {
-
-            // Update document in collection
-            webix.firestore.collection("invoice_cfg").doc(doc.doc_id).set(doc)
-                .then(function() {
-                    webix.message("Configuration successfully updated!");
-                    console.log("Document successfully written!");
-                })
-                .catch(function(error) {
-                    console.error("Error writing document: ", error);
-                });
-        }
+        
+        $$("seriifacturiForm").setValues(upsert("invoice_cfg",doc), true);
     },
 
     ui: {

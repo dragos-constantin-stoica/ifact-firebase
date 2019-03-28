@@ -10,25 +10,7 @@ var supplier = {
         });
         if (typeof doc.submit !== 'undefined') delete doc.submit;
 
-        //Check if the document is new
-        if (webix.isUndefined(doc.uid) || webix.isUndefined(doc.doc_id)) {
-            var newdoc = webix.firestore.collection("supplier").doc();
-            doc.doc_id = newdoc.id;
-            doc.uid = USERNAME.getUSERNAME().uid;
-            $$("supplierForm").setValues(doc, true);
-            newdoc.set(doc);
-            webix.message("Supplier successfully created!");
-        } else {
-            // Update document in collection
-            webix.firestore.collection("supplier").doc(doc.doc_id).set(doc)
-                .then(function() {
-                    webix.message("Supplier successfully updated!");
-                    console.log("Document successfully written!");
-                })
-                .catch(function(error) {
-                    console.error("Error writing document: ", error);
-                });
-        }
+        $$("supplierForm").setValues(upsert("supplier", doc), true);
     },
 
     edit: function() {
@@ -135,7 +117,7 @@ var supplier = {
                 type: "form",
                 click: function() {
                     if (!this.getParentView().validate()) {
-                        webix.message({
+                        msg({
                             type: "error",
                             text: "Banca, sucursala si IBAN sunt obligatorii!"
                         });
@@ -170,7 +152,8 @@ var supplier = {
             elementsConfig: {
                 labelWidth: 180
             },
-            elements: [{
+            elements: [
+                {
                     template: "Date Furnizor",
                     type: "section"
                 },
