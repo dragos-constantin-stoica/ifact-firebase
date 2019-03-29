@@ -4,18 +4,39 @@
  *
  */
 var USERNAME = {
-    getUSERNAME: function () {
+    getUSERNAME: function() {
         return webix.storage.session.get("USERNAME");
     },
 
-    setUSERNAME: function (username) {
+    setUSERNAME: function(username) {
         webix.storage.session.put("USERNAME", username);
     },
 
-    delUSERNAME: function () {
+    delUSERNAME: function() {
         webix.storage.session.remove("USERNAME");
     }
 };
+
+/**
+ * 
+ * Store supplires Id and name
+ * 
+ */
+var CUSTOMER = {
+
+    customerOptions: [],
+    getCUSTOMER: function() {
+        return this.customerOptions;
+    },
+
+    addCUSTOMER: function(item) {
+        this.customerOptions.push(item);
+    },
+
+    initCUSTOMER: function() {
+        this.customerOptions = [];
+    }
+}
 
 /**
  *
@@ -62,14 +83,14 @@ function upsert(fscollection, doc) {
             .collection(fscollection)
             .doc(doc.id)
             .set(doc)
-            .then(function () {
+            .then(function() {
                 msg({
                     text: "Document successfully updated!",
                     type: "success"
                 });
                 console.log("Document successfully updated!");
             })
-            .catch(function (error) {
+            .catch(function(error) {
                 msg({
                     text: "Error updating document. See console for details.",
                     type: "error"
@@ -225,14 +246,49 @@ function loadData(id) {
 
             break;
         case "2":
-            //Customers and contract form
-            //data manipulation handled via proxy
-            //$$("customersContractsList").filter("#supplier_id#", -1);
+            //Customers
+            $$("customersList").clearAll();
+            webix.firestore
+                .collection("customer")
+                .get()
+                .then(querySnapshot => {
+                    CUSTOMER.initCUSTOMER();
+                    querySnapshot.forEach(doc => {
+                        $$("customersList").add(doc.data(), 0);
+                        CUSTOMER.addCUSTOMER({
+                            id: doc.data().id,
+                            value: doc.data().nume
+                        });
+                    });
+                    $$("customersList").refresh();
+                });
+
             break;
         case "3":
             //Contracts form
-            //data manipulation handled via proxy
-            $$("contractForm").bind("contractList");
+            webix.firestore
+                .collection("customer")
+                .get()
+                .then(querySnapshot => {
+                    CUSTOMER.initCUSTOMER();
+                    querySnapshot.forEach(doc => {
+                        CUSTOMER.addCUSTOMER({
+                            id: doc.data().id,
+                            value: doc.data().nume
+                        });
+                    });
+                });
+            $$("contractList").clearAll();
+            webix.firestore
+                .collection("contract")
+                .get()
+                .then(querySnapshot => {
+                    querySnapshot.forEach(doc => {
+                        $$("contractList").add(doc.data(), 0);
+                    });
+                    $$("contractList").refresh();
+                });
+
             break;
         case "4":
             //Invoice form

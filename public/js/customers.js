@@ -61,12 +61,12 @@ var customers = {
                 type: "form",
                 value: "SAVE",
                 align: "center",
-                click: function () {
+                click: function() {
                     var doc = $$("customersForm").getValues();
                     if (webix.isUndefined(doc.uid) || webix.isUndefined(doc.id)) {
-                        $$("customersList").add(upsert("customers", doc), 0);
+                        $$("customersList").add(upsert("customer", doc), 0);
                     } else {
-                        $$("customersList").updateItem(doc.id, upsert("customers", doc));
+                        $$("customersList").updateItem(doc.id, upsert("customer", doc));
                     }
                     $$("customersList").refresh();
                     $$("customersForm").hide();
@@ -75,7 +75,7 @@ var customers = {
         ]
     },
 
-    editCustomer: function () {
+    editCustomer: function() {
         var item_id = $$("customersList").getSelectedId();
         if (item_id.length == 0) {
             msg({
@@ -102,7 +102,7 @@ var customers = {
         $$("customersForm").setValues($$("customersList").getItem(item_id), true);
     },
 
-    newCustomer: function () {
+    newCustomer: function() {
         if (webix.isUndefined($$("newCustomerWindow"))) {
             webix
                 .ui({
@@ -125,12 +125,10 @@ var customers = {
         rows: [{
                 view: "list",
                 id: "customersList",
-                template: function (obj, common) {
+                template: function(obj, common) {
                     return (
-                        "<div style='display: flex;justify-content: space-between;'><div><strong>" +
-                        obj.nume +
-                        "</strong><br/>Adresa: " +
-                        obj.adresa.replace(new RegExp("\r?\n", "g"), "<br />") +
+                        "<div style='display: flex;justify-content: space-between;'><div><strong>" + obj.nume +
+                        "</strong><br/>Adresa: " + obj.adresa.replace(new RegExp("\r?\n", "g"), "<br />") +
                         "</br>CUI: " + obj.CUI +
                         " | Nr. Ord. Reg. Com.: " + obj.NORG +
                         " | TVA EU: " + obj.TVA +

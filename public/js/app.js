@@ -60,7 +60,7 @@ var myApp = {
                     supplier.ui,
                     customers.ui,
                     contracts.ui,
-                    //invoice.ui,
+                    invoice.ui,
                     payments.ui,
                     configuration.ui,
                     //dashboard.ui()
@@ -75,7 +75,7 @@ var myApp = {
         supplier.ui,
         customers.ui,
         contracts.ui,
-        //invoice.ui,
+        invoice.ui,
         payments.ui,
         configuration.ui,
         //dashboard.ui

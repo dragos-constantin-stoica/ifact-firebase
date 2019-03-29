@@ -45,7 +45,7 @@ var invoice = {
         //get supplier data        
         var promise_supplier = webix.ajax(SERVER_URL + DBNAME + "/" + $$("invoiceForm").elements.supplier.getValue().substr(0, $$("invoiceForm").elements.supplier.getValue().indexOf("-")));
         //get customer data
-        var promise_customer = webix.ajax(SERVER_URL + DBNAME + "/" + $$("customer_contract").getSelectedItem().supplier_id);
+        var promise_customer = webix.ajax(SERVER_URL + DBNAME + "/" + $$("customerContract").getSelectedItem().supplier_id);
         var promise_invoice_no = null;
         //get new invoice number if createNewInvoice = true
         if (createNewInvoice) {
@@ -245,8 +245,7 @@ var invoice = {
                     {
                         view: "combo",
                         name: "supplier",
-                        label: "Furnizor:",
-                        options: "firestore->supplier"
+                        label: "Furnizor:"
                     },
                     {
                         view: "forminput",
@@ -258,8 +257,8 @@ var invoice = {
                                 { view: "label", label: "Beneficiar:" },
                                 {
                                     view: "unitlist",
-                                    id: "customer_contract",
-                                    name: "customer_contract",
+                                    id: "customerContract",
+                                    //name: "customerContract",
                                     sort: {
                                         by: "#nume#",
                                         dir: "asc"
@@ -273,8 +272,7 @@ var invoice = {
                                     },
                                     height: 'auto',
                                     template: "#contract# din data de #start_date# (exp.: #end_date#)<br/>#detalii#",
-                                    select: true,
-                                    url: "firestore->contract"
+                                    select: true
                                 }
                             ]
                         }
@@ -354,7 +352,7 @@ var invoice = {
                                         webix.message({ type: "error", text: "Creatation date, due date, exchange rate and VAT are mandatory!" });
                                         return;
                                     }
-                                    if (webix.isUndefined($$("customer_contract").getSelectedItem())) {
+                                    if (webix.isUndefined($$("customerContract").getSelectedItem())) {
                                         webix.message({ type: "error", text: "Please select a customer" });
                                         return;
                                     }
@@ -371,7 +369,7 @@ var invoice = {
                                         webix.message({ type: "error", text: "Creatation date, due date, exchange rate and VAT are mandatory!" });
                                         return;
                                     }
-                                    if (webix.isUndefined($$("customer_contract").getSelectedItem())) {
+                                    if (webix.isUndefined($$("customerContract").getSelectedItem())) {
                                         webix.message({ type: "error", text: "Please select a customer" });
                                         return;
                                     }

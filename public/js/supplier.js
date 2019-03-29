@@ -152,12 +152,7 @@ var supplier = {
             elementsConfig: {
                 labelWidth: 180
             },
-            elements: [
-                {
-                    template: "Date Furnizor",
-                    type: "section"
-                },
-                {
+            elements: [{
                     view: "text",
                     name: "nume",
                     label: "Nume",
