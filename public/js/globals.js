@@ -1,124 +1,5 @@
 /**
  *
- * Store user session at global level in browser session storage
- *
- */
-var USERNAME = {
-    getUSERNAME: function() {
-        return webix.storage.session.get("USERNAME");
-    },
-
-    setUSERNAME: function(username) {
-        webix.storage.session.put("USERNAME", username);
-    },
-
-    delUSERNAME: function() {
-        webix.storage.session.remove("USERNAME");
-    }
-};
-
-/**
- * 
- * Store supplires Id and name
- * 
- */
-var CUSTOMER = {
-
-    customerOptions: [],
-    getCUSTOMER: function() {
-        return this.customerOptions;
-    },
-
-    addCUSTOMER: function(item) {
-        this.customerOptions.push(item);
-    },
-
-    initCUSTOMER: function() {
-        this.customerOptions = [];
-    }
-}
-
-/**
- *
- * Sugar coating of message functions
- *
- */
-function msg(message) {
-    if (!webix.isUndefined(message.type)) {
-        if (message.type == "error" || message.type == "debug") {
-            console.log(message.text);
-        }
-    } else {
-        var tmp = {
-            text: message,
-            type: "info"
-        };
-        message = tmp;
-    }
-    webix.message(message);
-}
-
-/**
- *
- * Upsert fierstore
- * @param doc - document to be inserted or updated
- * @param fscollection - the collection to which the document belongs
- * @returns new or updated document
- *
- */
-function upsert(fscollection, doc) {
-    //Check if the document is new
-    if (webix.isUndefined(doc.uid) || webix.isUndefined(doc.id)) {
-        var newdoc = webix.firestore.collection(fscollection).doc();
-        doc.id = newdoc.id;
-        doc.uid = USERNAME.getUSERNAME().uid;
-        newdoc.set(doc);
-        msg({
-            text: "Document successfully created!",
-            type: "success"
-        });
-    } else {
-        // Update document in collection
-        webix.firestore
-            .collection(fscollection)
-            .doc(doc.id)
-            .set(doc)
-            .then(function() {
-                msg({
-                    text: "Document successfully updated!",
-                    type: "success"
-                });
-                console.log("Document successfully updated!");
-            })
-            .catch(function(error) {
-                msg({
-                    text: "Error updating document. See console for details.",
-                    type: "error"
-                });
-                console.error("Error updating document: ", error);
-            });
-    }
-    return doc;
-}
-
-/**
- *
- * Create new view that extends List and webix.ActiveContent
- *
- */
-webix.protoUI({
-    name: "activeList"
-}, webix.ui.list, webix.ActiveContent);
-
-/**
- *
- * Date formatting function
- *
- */
-var myDateFormat = webix.Date.dateToStr("%d.%m.%Y");
-
-/**
- *
  * Preprocess function has as main objective the coniguration
  * and preparation of data and layout components before rendering.
  *
@@ -237,6 +118,7 @@ function loadData(id) {
                 .get()
                 .then(querySnapshot => {
                     querySnapshot.forEach(doc => {
+                        SUPPLIER_DATA.set(doc.data());
                         $$("supplierForm").setValues(doc.data());
                         $$("conturi").clearAll();
                         $$("conturi").parse($$("supplierForm").getValues().conturi);
@@ -292,23 +174,65 @@ function loadData(id) {
             break;
         case "4":
             //Invoice form
-            /*
-                  var promise_pg4 = webix.ajax(SERVER_URL + DBNAME + LOAD_URL[id]);
-                  promise_pg4.then(function(realdata) {
-                      //success
-                      $$("invoiceForm").setValues({ "serial_number": realdata.json().SERIA + " " + realdata.json().NUMARUL }, true);
-                      invoice.localData.SERIA = realdata.json().SERIA;
-                      invoice.localData.NUMARUL = realdata.json().NUMARUL;
-                      $$('invoiceForm').elements.supplier.setValue($$('invoiceForm').elements.supplier.getList().getFirstId());
-                      $$('invoiceForm').elements.invoice_date.setValue(new Date());
-                      $$('invoiceForm').elements.due_date.setValue(new Date((new Date()).setDate((new Date()).getDate() + 30)));
-                      $$('invoiceForm').elements.TVA.setValue(0);
-                  }).fail(function(err) {
-                      //error
-                      webix.message({ type: "error", text: err });
-                      console.log(err);
-                  });
-                  */
+            $$("frame-body").src_setter("");
+
+            $$('invoiceForm').elements.supplier.define("options", SUPPLIER_DATA.getByCurrency());
+            $$('invoiceForm').elements.supplier.refresh();
+            $$("invoice_line").clearAll();
+
+
+            $$('invoiceForm').setValues({
+                invoice_date: new Date(),
+                due_date: new Date((new Date()).setDate((new Date()).getDate() + 30)),
+                TVA: 0,
+                exchange_rate: ""
+            }, true);
+
+
+            //Get invoice serial number
+            webix.firestore
+                .collection("invoice_cfg")
+                .get()
+                .then(querySnapshot => {
+                    querySnapshot.forEach(doc => {
+                        $$("invoiceForm").setValues({ "serial_number": doc.data().SERIA + " " + doc.data().NUMARUL }, true);
+                        INVOICESN.setINVOICESN(doc.data());
+                    });
+                });
+
+            //Get contract list
+            $$("customerContract").clearAll();
+            webix.firestore
+                .collection("contract")
+                .get()
+                .then(querySnapshot => {
+                    querySnapshot.forEach(doc => {
+                        $$("customerContract").add(doc.data(), 0);
+                    });
+                    $$("customerContract").refresh();
+                });
+
+            //Set supplier
+            webix.firestore
+                .collection("supplier")
+                .get()
+                .then(querySnapshot => {
+                    querySnapshot.forEach(doc => {
+                        SUPPLIER_DATA.set(doc.data());
+                        $$('invoiceForm').setValues({ supplier: doc.data().nume }, true);
+                    });
+                });
+
+            //Set customers
+            webix.firestore
+                .collection("customer")
+                .get()
+                .then(querySnapshot => {
+                    CUSTOMER.initCUSTOMER();
+                    querySnapshot.forEach(doc => {
+                        CUSTOMER.add(doc.data());
+                    });
+                });
             break;
         case "5":
             //Payments
@@ -395,6 +319,7 @@ function loadData(id) {
                 .then(querySnapshot => {
                     querySnapshot.forEach(doc => {
                         $$("seriifacturiForm").setValues(doc.data(), true);
+                        INVOICESN.setINVOICESN(doc.data());
                     });
                 });
             break;

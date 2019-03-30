@@ -2,10 +2,10 @@
  * PDF templates that will be rendered with Handlebar
  * JSON objects that contain blocks
  */
-var templates = [
+var templates = {
 
     //ROMANIAN template
-    `{
+    RO: `{
         "pageSize": "A4",
         "pageOrientation": "portrait",
         "pageMargins": [40, 60],
@@ -206,7 +206,7 @@ var templates = [
     }`,
 
     //ENGLISH template
-    `{
+    EN: `{
         "pageSize": "A4",
         "pageOrientation": "portrait",
         "pageMargins": [40, 60],
@@ -359,7 +359,9 @@ var templates = [
         }
     }`
 
-];
+};
+
+
 
 
 Handlebars.registerHelper("normalized_address", function(address) {

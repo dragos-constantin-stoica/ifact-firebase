@@ -1,134 +1,84 @@
 var invoice = {
 
-    localData: {
-        COPIES: 1,
-        TEMPLATE: 1,
-        SERIA: "",
-        NUMARUL: "",
-        FURNIZOR: {},
-        BENEFICIAR: {},
-        TVA: 0.00,
-        INVOICE_DATE: "",
-        DUE_DATE: "",
-        CURS_BNR: {
-            data: "",
-            eur_ron: 0.00
-        },
-        INVOICE_LINE: [],
-        INVOICE_SUM: 0.00,
-        INVOICE_TVA_SUM: 0.00,
-        INVOICE_TOTAL: 0.00
-    },
-
     setlocalData: function(createNewInvoice) {
         //clean-up existing data
-        invoice.localData = {
-            COPIES: 1,
-            TEMPLATE: 1,
-            SERIA: "",
-            NUMARUL: "",
-            FURNIZOR: {},
-            BENEFICIAR: {},
-            TVA: 0.00,
-            INVOICE_DATE: "",
-            DUE_DATE: "",
-            CURS_BNR: {
-                data: "",
-                eur_ron: 0.00
-            },
-            INVOICE_LINE: [],
-            INVOICE_SUM: 0.00,
-            INVOICE_TVA_SUM: 0.00,
-            INVOICE_TOTAL: 0.00
-        };
+        INVOICEDATA.initInvoiceData();
 
-        //get supplier data        
-        var promise_supplier = webix.ajax(SERVER_URL + DBNAME + "/" + $$("invoiceForm").elements.supplier.getValue().substr(0, $$("invoiceForm").elements.supplier.getValue().indexOf("-")));
-        //get customer data
-        var promise_customer = webix.ajax(SERVER_URL + DBNAME + "/" + $$("customerContract").getSelectedItem().supplier_id);
-        var promise_invoice_no = null;
-        //get new invoice number if createNewInvoice = true
-        if (createNewInvoice) {
-            promise_invoice_no = webix.ajax().put(SERVER_URL + DBNAME + '/_design/config/_update/sn' + LOAD_URL[4]);
-        } else {
-            promise_invoice_no = webix.ajax(SERVER_URL + DBNAME + LOAD_URL[4]);
-        }
+        INVOICEDATA.setInvoiceData("FURNIZOR", SUPPLIER_DATA.get());
+        INVOICEDATA.setInvoiceData("SERIA", INVOICESN.getINVOICESN().SERIA);
+        INVOICEDATA.setInvoiceData("NUMARUL", INVOICESN.getINVOICESN().NUMARUL);
+        //Get cusotmer infomration
+        INVOICEDATA.setInvoiceData("BENEFICIAR", CUSTOMER.find($$("customerContract").getSelectedItem().customer_id));
 
-        webix.promise.all([promise_supplier, promise_customer, promise_invoice_no]).then(function(realdata) {
-            var result = realdata[2].json();
-            invoice.localData.FURNIZOR = realdata[0].json();
-            invoice.localData.BENEFICIAR = realdata[1].json();
-            //Search for the bank account accroding to the currency
-            //Supose there is only one account per currency
-            invoice.localData.FURNIZOR.conturi.forEach(function(element) {
-                if ($$("invoiceForm").elements.supplier.getText().indexOf(element.valuta) != -1) {
-                    for (var prop in element) {
-                        invoice.localData.FURNIZOR[prop] = element[prop];
-                    }
+        //Search for the bank account accroding to the currency
+        //Supose there is only one account per currency
+        INVOICEDATA.getInvoiceData().FURNIZOR.conturi.forEach(function(element) {
+            if ($$("invoiceForm").elements.supplier.getText().indexOf(element.valuta) != -1) {
+                var tmpFurnizor = INVOICEDATA.getInvoiceData().FURNIZOR;
+                for (var prop in element) {
+                    tmpFurnizor[prop] = element[prop];
                 }
-            }, this);
-            if (createNewInvoice) {
-                invoice.localData.SERIA = result.doc.SERIA;
-                invoice.localData.NUMARUL = result.doc.NUMARUL;
-            } else {
-                $$("invoiceForm").setValues({ "serial_number": result.SERIA + " " + result.NUMARUL }, true);
-                invoice.localData.SERIA = result.SERIA;
-                invoice.localData.NUMARUL = result.NUMARUL;
+                INVOICEDATA.setInvoiceData("FURNIZOR", tmpFurnizor);
             }
+        }, this);
 
-            var form_data = $$('invoiceForm').getValues();
-            invoice.localData.COPIES = form_data.copies;
-            invoice.localData.TEMPLATE = form_data.template;
-            invoice.localData.TVA = (typeof form_data.TVA === 'string') ? parseFloat(form_data.TVA) : form_data.TVA;
-            invoice.localData.CURS_BNR.data = form_data.invoice_date;
-            invoice.localData.CURS_BNR.eur_ron = (typeof form_data.exchange_rate === 'string') ? parseFloat(form_data.exchange_rate) : form_data.exchange_rate;
-
-            invoice.localData.INVOICE_DATE = form_data.invoice_date;
-            invoice.localData.DUE_DATE = form_data.due_date;
-
-            $$("invoice_line").data.each(function(obj) {
-                invoice.localData.INVOICE_LINE.push({
-                    details: obj.invoice_details,
-                    um: obj.invoice_mu,
-                    qty: obj.invoice_qty,
-                    up: obj.invoice_up,
-                    line_value: obj.line_value,
-                    line_tva: obj.line_tva
-                });
-                invoice.localData.INVOICE_SUM += obj.line_value;
-                invoice.localData.INVOICE_TVA_SUM += obj.line_tva;
-            });
-            invoice.localData.INVOICE_TOTAL += (invoice.localData.INVOICE_SUM + invoice.localData.INVOICE_TVA_SUM);
-
-            if (createNewInvoice) {
-                var doc = webix.copy(invoice.localData);
-                doc.doctype = "INVOICE";
-                doc._id = doc.SERIA + "___" + ("00000" + doc.NUMARUL).substr(-5);
-                $.couch.db(DBNAME).saveDoc(doc, {
-                    success: function(data) {
-                        console.log(data);
-                        webix.message("Factura " + invoice.localData.SERIA + " - " + invoice.localData.NUMARUL +
-                            " a fost salvata in baza de date cu succes!");
-                    },
-                    error: function(status) {
-                        webix.message({ type: "error", text: status });
-                        console.log(status);
-                    }
-                });
-            }
-
-            invoice.generatePDF();
-
-        }).fail(function(err) {
-            //error
-            webix.message({ type: "error", message: err });
-            console.log(err);
+        var form_data = $$('invoiceForm').getValues();
+        INVOICEDATA.setInvoiceData("COPIES", form_data.copies);
+        INVOICEDATA.setInvoiceData("TEMPLATE", $$("template").getInputNode().value);
+        INVOICEDATA.setInvoiceData("TVA", (typeof form_data.TVA === 'string') ? parseFloat(form_data.TVA) : form_data.TVA);
+        INVOICEDATA.setInvoiceData("CURS_BNR", {
+            data: form_data.invoice_date,
+            eur_ron: (typeof form_data.exchange_rate === 'string') ? parseFloat(form_data.exchange_rate) : form_data.exchange_rate
         });
+
+        INVOICEDATA.setInvoiceData("INVOICE_DATE", form_data.invoice_date);
+        INVOICEDATA.setInvoiceData("DUE_DATE", form_data.due_date);
+
+        var tmpInvoiceLine = [];
+        $$("invoice_line").data.each(function(obj) {
+            tmpInvoiceLine.push({
+                details: obj.invoice_details,
+                um: obj.invoice_mu,
+                qty: obj.invoice_qty,
+                up: obj.invoice_up,
+                line_value: obj.line_value,
+                line_tva: obj.line_tva
+            });
+            INVOICEDATA.setInvoiceData("INVOICE_SUM", INVOICEDATA.getInvoiceData().INVOICE_SUM + obj.line_value);
+            INVOICEDATA.setInvoiceData("INVOICE_TVA_SUM", INVOICEDATA.getInvoiceData().INVOICE_TVA_SUM + obj.line_tva);
+        });
+        INVOICEDATA.setInvoiceData("INVOICE_LINE", tmpInvoiceLine);
+        INVOICEDATA.setInvoiceData("INVOICE_TOTAL", INVOICEDATA.getInvoiceData().INVOICE_TOTAL + INVOICEDATA.getInvoiceData().INVOICE_SUM + INVOICEDATA.getInvoiceData().INVOICE_TVA_SUM);
+
+        /*
+                if (createNewInvoice) {
+
+                    var doc = webix.copy(invoice.localData);
+                    doc.doctype = "INVOICE";
+                    doc._id = doc.SERIA + "___" + ("00000" + doc.NUMARUL).substr(-5);
+                    $.couch.db(DBNAME).saveDoc(doc, {
+                        success: function(data) {
+                            console.log(data);
+                            webix.message("Factura " + invoice.localData.SERIA + " - " + invoice.localData.NUMARUL +
+                                " a fost salvata in baza de date cu succes!");
+                        },
+                        error: function(status) {
+                            webix.message({
+                                type: "error",
+                                text: status
+                            });
+                            console.log(status);
+                        }
+                    });
+                }
+        */
+        invoice.generatePDF();
+
     },
 
     generatePDF: function() {
-        tmpTemplate = Handlebars.compile(templates[invoice.localData.TEMPLATE - 1]);
-        PDF_DOC = JSON.parse(tmpTemplate(invoice.localData));
+        tmpTemplate = Handlebars.compile(templates[INVOICEDATA.getInvoiceData().TEMPLATE]);
+        PDF_DOC = JSON.parse(tmpTemplate(INVOICEDATA.getInvoiceData()));
         pdfMake.createPdf(PDF_DOC).getDataUrl(function(outDoc) {
             $$("frame-body").load(outDoc);
         });
@@ -179,22 +129,36 @@ var invoice = {
     },
 
     addLine: function() {
-        //get the window with the edit form
-        webix.ui({
-            view: "window",
-            id: "invoicewindow",
-            width: 600,
-            position: "top",
-            head: "Adauga Linie Factura",
-            body: webix.copy(invoice.invoiceLineForm)
-        }).show();
+        if (webix.isUndefined($$('invoicewindow'))) {
+            //get the window with the edit form
+            webix.ui({
+                view: "window",
+                id: "invoicewindow",
+                width: 600,
+                position: "top",
+                head: "Adauga Linie Factura",
+                body: webix.copy(invoice.invoiceLineForm)
+            }).show();
+        } else {
+            $$('invoicewindow').show();
+        }
 
         $$('invoiceLineForm').clear();
-        $$('invoiceLineForm').setValues({ "id": "new" });
+        $$('invoiceLineForm').setValues({
+            "id": "new"
+        });
+
     },
 
     editLine: function() {
-        if (typeof $$("invoice_line").getSelectedId(false, true) !== 'undefined') {
+        if (typeof $$("invoice_line").getSelectedId(false, true) === 'undefined') {
+            msg({
+                type: "error",
+                text: "Please select one row!"
+            });
+            return;
+        }
+        if (webix.isUndefined($$('invoicewindow'))) {
             webix.ui({
                 view: "window",
                 id: "invoicewindow",
@@ -203,13 +167,11 @@ var invoice = {
                 head: "Modifica Linie Factura",
                 body: webix.copy(invoice.invoiceLineForm)
             }).show();
-
-            $$('invoiceLineForm').clear();
-            $$('invoiceLineForm').setValues($$('invoice_line').getSelectedItem());
         } else {
-            webix.message({ type: "error", text: "Please select one row!" });
+            $$('invoicewindow').show();
         }
-
+        $$('invoiceLineForm').clear();
+        $$('invoiceLineForm').setValues($$('invoice_line').getSelectedItem());
     },
 
     delLine: function() {
@@ -217,7 +179,7 @@ var invoice = {
             $$("invoice_line").remove($$("invoice_line").getSelectedId(false, true));
             $$("invoice_line").clearSelection();
         } else {
-            webix.message({ type: "error", text: "Please select one row!" });
+            msg({ type: "error", text: "Please select one row!" });
         }
     },
 
@@ -237,6 +199,7 @@ var invoice = {
                     },
                     {
                         view: "combo",
+                        id: "template",
                         name: "template",
                         label: "Template:",
                         options: [{ id: 1, value: "RO" }, { id: 2, value: "EN" }],
@@ -270,7 +233,6 @@ var invoice = {
                                         height: 60,
                                         headerHeight: 30,
                                     },
-                                    height: 'auto',
                                     template: "#contract# din data de #start_date# (exp.: #end_date#)<br/>#detalii#",
                                     select: true
                                 }
@@ -286,7 +248,7 @@ var invoice = {
                     {
                         cols: [
                             { view: "text", name: "TVA", label: "TVA:", placeholder: "TVA in procente" },
-                            { view: "text", name: "exchange_rate", label: "Curs BNR:", placeholder: "€$£->RON" }
+                            { view: "text", name: "exchange_rate", label: "Curs BNR:", placeholder: "€->RON" }
                         ]
                     },
                     {
@@ -330,11 +292,31 @@ var invoice = {
                                     }
                                 },
                                 {
-                                    cols: [
-                                        { view: "button", type: "icon", icon: "plus-square", label: "Add", width: 80, click: "invoice.addLine" },
-                                        { view: "button", type: "icon", icon: "pencil-square-o", label: "Edit", width: 80, click: "invoice.editLine" },
+                                    cols: [{
+                                            view: "button",
+                                            type: "icon",
+                                            icon: "wxi-plus",
+                                            label: "Add",
+                                            width: 80,
+                                            click: "invoice.addLine"
+                                        },
+                                        {
+                                            view: "button",
+                                            type: "icon",
+                                            icon: "wxi-pencil",
+                                            label: "Edit",
+                                            width: 80,
+                                            click: "invoice.editLine"
+                                        },
                                         {},
-                                        { view: "button", type: "icon", icon: "trash-o", label: "DEL", width: 80, click: "invoice.delLine" }
+                                        {
+                                            view: "button",
+                                            type: "icon",
+                                            icon: "wxi-trash",
+                                            label: "Delete",
+                                            width: 80,
+                                            click: "invoice.delLine"
+                                        }
                                     ]
                                 }
                             ]
@@ -392,57 +374,3 @@ var invoice = {
     }
 
 };
-
-/**
- * Define mandatory structure for INVOICE
- * 
-    {
-        COPIES: 1,
-        TEMPLATE: 1,
-        SERIA: "",
-        NUMARUL: "",
-        FURNIZOR: {
-            {
-                doctype: "SUPPLIER",
-                conturi: [ ],
-                nume: "",
-                NORG: "",
-                EUNORG: "",
-                CUI: "",
-                TVA: "",
-                adresa: "",
-                banca: "",
-                sucursala: "",
-                IBAN: "",
-                SWIFT: "",
-                BIC: "",
-                valuta: ""
-            }
-        },
-        BENEFICIAR: {
-            {
-                doctype: "CUSTOMER",
-                nume: "",
-                NORG: "",
-                CUI: "",
-                adresa: "",
-                banca: "",
-                sucursala: "",
-                IBAN: "",
-                TVA: ""
-            }
-        },
-        TVA: 0.00,
-        INVOICE_DATE: "",
-        DUE_DATE: "",
-        CURS_BNR: {
-            data: "",
-            eur_ron: 0.00
-        },
-        INVOICE_LINE: [],
-        INVOICE_SUM: 0.00,
-        INVOICE_TVA_SUM: 0.00,
-        INVOICE_TOTAL: 0.00
-    }
- * 
- */
