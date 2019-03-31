@@ -214,17 +214,20 @@ var templates = {
         "content": [
             {{#carboncopy COPIES}}
             {
-                "columns": [{
-                        "width": "50%",
-                        "text": "Copy N°.{{@index}}"
+                "columns": [
+                    {
+                        "width":80,
+                        "image": "{{LOGO}}"
                     },
                     {
-                        "width": "50%",
+                        "width": "80%",
                         "text": [
                             "SERIES: ",
                             { "text": "{{SERIA}}", "fontSize": 13, "bold": true },
                             " N°. ",
-                            { "text": "{{NUMARUL}}", "fontSize": 13, "bold": true }
+                            { "text": "{{NUMARUL}}", "fontSize": 13, "bold": true },
+                            "\\n\\n",
+                            { "text": "Copy N°.{{@index}}" }
                         ],
                         "alignment": "right"
                     }

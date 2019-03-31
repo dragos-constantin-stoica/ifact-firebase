@@ -322,6 +322,17 @@ function loadData(id) {
                         INVOICESN.setINVOICESN(doc.data());
                     });
                 });
+            //Load logo
+            firebase.storage().ref('upload/' + SUPPLIER_DATA.get().id).getDownloadURL().then(function(url) {
+                $$("photo_logo").parse({
+                    src: url
+                });
+                $$("photo_logo").refresh();
+
+            }).catch(function(err) {
+                console.error(err);
+            });
+
             break;
         default:
             break;
