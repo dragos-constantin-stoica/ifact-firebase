@@ -179,7 +179,6 @@ var configuration = {
     */
     saveseriifacturi: function() {
         var doc = $$("seriifacturiForm").getValues();
-
         $$("seriifacturiForm").setValues(upsert("invoice_cfg", doc), true);
     },
 

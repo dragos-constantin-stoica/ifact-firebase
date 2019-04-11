@@ -61,6 +61,7 @@ function upsert(fscollection, doc) {
     return doc;
 }
 
+
 /**
  *
  * Create new view that extends List and webix.ActiveContent
