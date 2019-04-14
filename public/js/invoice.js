@@ -140,7 +140,7 @@ var invoice = {
 
             var sfDocRef = webix.firestore.collection("invoice_cfg").doc(INVOICESN.getINVOICESN().id);
 
-            webix.firestore.collection("invoice_cfg").doc(INVOICESN.getINVOICESN().id)
+            var unsubscribe = webix.firestore.collection("invoice_cfg").doc(INVOICESN.getINVOICESN().id)
                 .onSnapshot(function(doc) {
                     $$("seriifacturiForm").setValues(doc.data(), true);
                     $$("invoiceForm").setValues({
@@ -166,6 +166,7 @@ var invoice = {
 
             // Update count
             sfDocRef.update("NUMARUL", fbfs.FieldValue.increment(1));
+            unsubscribe();
 
         } else {
 
