@@ -80,69 +80,15 @@ var invoice = {
 
     generatePDF: function(createNewInvoice) {
 
-        /*
-        if (createNewInvoice) {
-
-            var doc = webix.copy(invoice.localData);
-            doc.doctype = "INVOICE";
-            doc._id = doc.SERIA + "___" + ("00000" + doc.NUMARUL).substr(-5);
-            $.couch.db(DBNAME).saveDoc(doc, {
-                success: function(data) {
-                    console.log(data);
-                    webix.message("Factura " + invoice.localData.SERIA + " - " + invoice.localData.NUMARUL +
-                        " a fost salvata in baza de date cu succes!");
-                },
-                error: function(status) {
-                    webix.message({
-                        type: "error",
-                        text: status
-                    });
-                    console.log(status);
-                }
-            });
-        }
-        */
-
-
-        /*
-
-        // Create a reference to the SF doc.
-        var sfDocRef = db.collection("cities").doc("SF");
-
-        // Uncomment to initialize the doc.
-        // sfDocRef.set({ population: 0 });
-
-        return db.runTransaction(function (transaction) {
-            // This code may get re-run multiple times if there are conflicts.
-            return transaction.get(sfDocRef).then(function (sfDoc) {
-                if (!sfDoc.exists) {
-                    throw "Document does not exist!";
-                }
-
-                // Add one person to the city population.
-                // Note: this could be done without a transaction
-                //       by updating the population using FieldValue.increment()
-                var newPopulation = sfDoc.data().population + 1;
-                transaction.update(sfDocRef, {
-                    population: newPopulation
-                });
-            });
-        }).then(function () {
-            console.log("Transaction successfully committed!");
-        }).catch(function (error) {
-            console.log("Transaction failed: ", error);
-        });
-
-        */
-
-
         if (createNewInvoice) {
 
             var sfDocRef = webix.firestore.collection("invoice_cfg").doc(INVOICESN.getINVOICESN().id);
-
-            var unsubscribe = webix.firestore.collection("invoice_cfg").doc(INVOICESN.getINVOICESN().id)
-                .onSnapshot(function(doc) {
-                    $$("seriifacturiForm").setValues(doc.data(), true);
+ 
+            // Update count
+            sfDocRef.update("NUMARUL", fbfs.FieldValue.increment(1)).then(function(){
+                sfDocRef.get().then(function(doc) {
+                    if (doc.exists) {
+                        $$("seriifacturiForm").setValues(doc.data(), true);
                     $$("invoiceForm").setValues({
                         "serial_number": doc.data().SERIA + " " + doc.data().NUMARUL
                     }, true);
@@ -159,14 +105,17 @@ var invoice = {
                     });
 
                     var inv_doc = webix.copy(INVOICEDATA.getInvoiceData());
-                    inv_doc.id = inv_doc.SERIA + "___" + ("00000" + inv_doc.NUMARUL).substr(-5);
-                    inv_doc.uid = USERNAME.getUSERNAME().uid;
+                    //inv_doc.id = inv_doc.SERIA + "___" + ("00000" + inv_doc.NUMARUL).substr(-5);
+                    //inv_doc.uid = USERNAME.getUSERNAME().uid;
                     upsert("inovoice", inv_doc);
+                    } else {
+                        // doc.data() will be undefined in this case
+                        msg({text:"No such document!", type:"error"});
+                    }
+                }).catch(function(error) {
+                    msg({text:"Error getting document:" + error, type:"error"});
                 });
-
-            // Update count
-            sfDocRef.update("NUMARUL", fbfs.FieldValue.increment(1));
-            unsubscribe();
+            });
 
         } else {
 
