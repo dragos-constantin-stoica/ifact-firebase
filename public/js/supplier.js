@@ -27,7 +27,7 @@ var supplier = {
                 id: "conturiwindow",
                 width: 400,
                 position: "top",
-                head: "Administrare Conturi Bancare",
+                head: "Bank Accounts",
                 body: webix.copy(supplier.conturiForm)
             }).show();
         } else {
@@ -57,7 +57,7 @@ var supplier = {
                 id: "conturiwindow",
                 width: 400,
                 position: "top",
-                head: "Administrare Conturi Bancare",
+                head: "Bank Accounts",
                 body: webix.copy(supplier.conturiForm)
             }).show();
         } else {
@@ -77,13 +77,13 @@ var supplier = {
         elements: [{
                 view: "text",
                 type: "text",
-                label: "Banca",
+                label: "Bank",
                 name: "banca"
             },
             {
                 view: "text",
                 type: 'text',
-                label: "Sucursala",
+                label: "Office",
                 name: "sucursala"
             },
             {
@@ -107,7 +107,7 @@ var supplier = {
             {
                 view: "text",
                 type: 'text',
-                label: "Valuta",
+                label: "Currency",
                 name: "valuta"
             },
 
@@ -155,37 +155,37 @@ var supplier = {
             elements: [{
                     view: "text",
                     name: "nume",
-                    label: "Nume",
-                    placeholder: "Numele societatii"
+                    label: "Company",
+                    placeholder: "company name"
                 },
                 {
                     view: "text",
                     name: "NORG",
-                    label: "Nr. Ord. Reg. Com.",
+                    label: "Registration No.",
                     placeholder: "Numar de Ordine in Registrul Comertului"
                 },
                 {
                     view: "text",
                     name: "EUNORG",
-                    label: "NORC European",
+                    label: "EU Registration No.",
                     placeholder: "Numar de ordine European in Registrul Comertului"
                 },
                 {
                     view: "text",
                     name: "CUI",
-                    label: "C.U.I",
+                    label: "Company identifier",
                     placeholder: "Cod Unic de Identificare"
                 },
                 {
                     view: "text",
                     name: "TVA",
-                    label: "TVA EU",
+                    label: "VAT No.",
                     placeholder: "TVA European"
                 },
                 {
                     view: "textarea",
                     name: "adresa",
-                    label: "Adresa",
+                    label: "Address",
                     height: 110,
                     placeholder: "Str. , Nr. , Bl., Sc., Apt., Cod Postal, Localitatea, Comuna, Judetul/Sector, Tara"
                 },
@@ -203,7 +203,7 @@ var supplier = {
                                     height: 58
                                 },
                                 select: true,
-                                template: "<div style='overflow: hidden;float:left;'>Banca: #banca#, Sucursala: #sucursala#" +
+                                template: "<div style='overflow: hidden;float:left;'>Bank: #banca#, Office: #sucursala#" +
                                     "<br/>IBAN: #IBAN# SWIFT: #SWIFT# BIC: #BIC# [#valuta#]</div>"
                             },
                             {
