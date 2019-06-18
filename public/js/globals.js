@@ -236,21 +236,48 @@ function loadData(id) {
             break;
         case "5":
             //Payments
+
+            //Get all invoices and do the math here
+            webix.firestore
+                .collection("invoice")
+                .get()
+                .then(querySnapshot => {
+                    $$('invoiceList').clearAll();
+                    $$('dueList').clearAll();
+                    $$('payedList').clearAll();
+                    querySnapshot.forEach(doc => {
+                        if (webix.isUndefined(doc.PAYMENTS)) {
+                            //No payments
+                            //Check for OVERDUE invoice
+                            if ((new Date(doc.DUE_DATE.substr(6) + "-" + doc.DUE_DATE.substr(3, 2) + "-" + doc.DUE_DATE.substr(0, 2)) >= new Date())) {
+
+                            } else {
+                                //Maybe a NEW invoice
+                            }
+
+
+                        } else {
+                            //We have some payments
+                        }
+                    });
+                });
+
+
             /*
                   var promise_pg5 = webix.ajax(SERVER_URL + DBNAME + LOAD_URL[id]);
                   promise_pg5.then(function(realdata) {
                       //clear all lists
-                      $$('invoiceList').clearAll();
-                      $$('dueList').clearAll();
-                      $$('payedList').clearAll();
+
                       $$('invoiceList').parse(realdata.json().filter(function(obj) {
                           return (obj.doctype == "INVOICE") && (obj.PAYMENT_TOTAL < obj.INVOICE_TOTAL) &&
                               (new Date(obj.DUE_DATE.substr(6) + "-" + obj.DUE_DATE.substr(3, 2) + "-" + obj.DUE_DATE.substr(0, 2)) >= new Date());
                       }));
+
                       $$('dueList').parse(realdata.json().filter(function(obj) {
                           return (obj.doctype == "INVOICE") && (obj.PAYMENT_TOTAL < obj.INVOICE_TOTAL) &&
                               (new Date(obj.DUE_DATE.substr(6) + "-" + obj.DUE_DATE.substr(3, 2) + "-" + obj.DUE_DATE.substr(0, 2)) < new Date());
                       }));
+
                       //Group multiple payments per invoice
                       var payed_raw = realdata.json().filter(function(obj) { return obj.doctype == "PAYMENT"; });
                       payed_proc = payed_raw.reduce(function(prevValue, crtValue) {

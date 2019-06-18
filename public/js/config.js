@@ -195,16 +195,16 @@ var configuration = {
 
                 {
                     view: "fieldset",
-                    label: "Serii Facturi",
+                    label: "Invoice Serial Number",
                     body: {
                         cols: [{
                             view: "text",
-                            label: "SERIA:",
-                            placeholder: "Seria",
+                            label: "SERIES:",
+                            placeholder: "Series",
                             name: "SERIA"
                         }, {
                             view: "counter",
-                            label: "NUMARUL:",
+                            label: "NUMBER:",
                             step: 1,
                             min: 0,
                             name: "NUMARUL"
@@ -282,7 +282,7 @@ var configuration = {
                     }
                 }, {
                     view: "fieldset",
-                    label: "Export/Import Date",
+                    label: "Data Export/Import",
                     body: {
                         cols: [{
                             view: "button",
