@@ -102,6 +102,14 @@
             // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
 
             try {
+                //user is now logged in and we can show the UI
+                webix.env.cdn = "//cdn.webix.com";
+                //This is a Single Page Application
+                //it is designed for Desktop browsers
+
+                webix.i18n.parseFormat = "%d.%m.%Y";
+                webix.i18n.setLocale();
+                
                 let app = firebase.app();
                 let features = ['auth', 'database', 'messaging', 'storage'].filter(feature => typeof app[feature] === 'function');
 
@@ -124,44 +132,22 @@
                             USERNAME.setUSERNAME(user);
 
                             document.getElementById('firebaseui-auth-container').style.display = 'none';
+
                             console.log(user);
-
-                            //user is now logged in and we can show the UI
-                            webix.env.cdn = "//cdn.webix.com";
-                            //This is a Single Page Application
-                            //it is designed for Desktop browsers
-
-                            webix.i18n.parseFormat = "%d.%m.%Y";
-                            webix.i18n.setLocale();
 
                             webix.ready(function () {
                                 myApp.init();
                             });
-
-
                             return true;
                         },
                         uiShown: function () {
                             // The widget is rendered.
                             // Hide the loader.
                             document.getElementById('loader').style.display = 'none';
-
-                            //already authentified
-                            if (USERNAME.getUSERNAME()) {
-                                document.getElementById('firebaseui-auth-container').style.display = 'none';
-                                //user is now logged in and we can show the UI
-                                webix.env.cdn = "//cdn.webix.com";
-                                //This is a Single Page Application
-                                //it is designed for Desktop browsers
-
-                                webix.i18n.parseFormat = "%d.%m.%Y";
-                                webix.i18n.setLocale();
-
-                                webix.ready(function () {
-                                    myApp.init();
-                                });
-                            };
-
+                            console.log("index.html::uiShow");
+                            webix.ready(function () {
+                                myApp.init();
+                            });
                         }
                     },
                     // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
@@ -183,48 +169,7 @@
                 };
 
                 // The start method will wait until the DOM is loaded.
-                ui.start('#firebaseui-auth-container', uiConfig);
-
-                /*
-                firebase.auth().signInWithPopup(provider).then(function(result) {
-                    // This gives you a Google Access Token. You can use it to access the Google API.
-                    var token = result.credential.accessToken;
-                    // The signed-in user info.
-                    var user = result.user;
-                    USERNAME.setUSERNAME(user);
-
-                    console.log(user);
-
-                    //user is now logged in and we can show the UI
-                    webix.env.cdn = "//cdn.webix.com";
-                    //This is a Single Page Application
-                    //it is designed for Desktop browsers
-                    
-                    webix.i18n.parseFormat = "%d.%m.%Y";
-                    webix.i18n.setLocale();
-
-                    webix.ready(function() {
-                        myApp.init();
-                    });
-
-                }).catch(function(error) {
-                    // Handle Errors here.
-                    var errorCode = error.code;
-                    var errorMessage = error.message;
-                    // The email of the user's account used.
-                    var email = error.email;
-                    // The firebase.auth.AuthCredential type that was used.
-                    var credential = error.credential;
-
-
-                    USERNAME.delUSERNAME();
-                    if (!webix.isUndefined($$('mainLayout'))) $$('mainLayout').destructor();
-                    if (!webix.isUndefined($$('sidemenu'))) $$('sidemenu').destructor();
-                    myApp.init();
-
-                    console.error(error);
-                });
-                */                
+                ui.start('#firebaseui-auth-container', uiConfig);              
 
             } catch (e) {
                 console.error(e);
@@ -235,11 +180,8 @@
 
 <!-- The surrounding HTML is left untouched by FirebaseUI.
      Your app may use that space for branding, controls and other customizations.-->
-<div id="firebaseui-auth-container"></div>
-<div id="loader">Loading...</div>
-
-
-
+    <div id="firebaseui-auth-container"></div>
+    <div id="loader">Loading...</div>
 </body>
 
 </html>

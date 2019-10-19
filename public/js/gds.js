@@ -39,7 +39,7 @@ var SUPPLIER_DATA = {
             result.push({
                 id: this.supplier.id + "-" + element.valuta,
                 value: this.supplier.nume + " [" + element.valuta + "]"
-            })
+            });
         }, this);
         return result;
     }
@@ -136,7 +136,7 @@ var INVOICEDATA = {
             INVOICE_SUM: 0.00,
             INVOICE_TVA_SUM: 0.00,
             INVOICE_TOTAL: 0.00
-        }
+        };
     },
 
     setInvoiceData: function(key, values) {

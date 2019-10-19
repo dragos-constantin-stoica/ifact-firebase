@@ -2,26 +2,33 @@
 var myApp = {
 
     init: function() {
-        //myApp.showUI();
-
-        if (USERNAME.getUSERNAME()) {
-            myApp.showUI();
-        } else {
-            logic.login();
-        }
-
+        myApp.showUI();
     },
 
     showUI: function() {
+
         if (!webix.isUndefined($$('mainLayout'))) $$('mainLayout').destructor();
         if (!webix.isUndefined($$('sidemenu'))) $$('sidemenu').destructor();
-        webix.ui(webix.copy(myApp.ui));
-        webix.ui(webix.copy(myApp.sidemenu));
+        if(USERNAME.getUSERNAME()){
+            webix.ui(webix.copy(myApp.ui));
+            webix.ui(webix.copy(myApp.sidemenu));
 
-        if (!$$("menu").config.hidden) $$("menu").hide();
-        $$('page-1').show();
-        loadData("1");
-        $$('breadcrumb').setValue('iFact - Supplier');
+            if (!$$("menu").config.hidden) $$("menu").hide();
+            $$('page-1').show();
+            loadData("1");
+            $$('breadcrumb').setValue('iFact - Supplier');
+        }else{
+            if (document.getElementById("firebaseui-auth-container") === null) {
+                var div = document.createElement('div');
+                div.id = 'firebaseui-auth-container';
+                if (document.body.firstChild) {
+                    document.body.insertBefore(div, document.body.firstChild);
+                } else {
+                    document.body.appendChild(div);
+                }
+            }
+            webix.ui(webix.copy(myApp.ui_login));
+        }
 
     },
 
@@ -119,7 +126,34 @@ var myApp = {
                 }
             }
         }
-    }
+    },
+
+    ui_login: {
+        id: "mainLayout",
+        view: "layout",
+        type: "space",
+        rows: [{
+                view: "template",
+                type: "header",
+                template: "iFact the best invoicing platform!&nbsp;<img width=18px alt='iFact logo' src='img/icon.svg'/>",
+                css: {
+                    "text-align": "center"
+                }
+            },
+            {
+                view: "template",
+                content: "firebaseui-auth-container",
+            },
+            {
+                autoheight: true,
+                template: "Please contact <b>office@level33.be</b> for a new account or any technical questions.",
+                css: {
+                    "text-align": "center"
+                }
+
+            }
+        ]
+    },
 
 
 };
