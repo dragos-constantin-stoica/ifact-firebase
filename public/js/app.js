@@ -32,6 +32,21 @@ var myApp = {
 
     },
 
+    logout: function () {
+
+        firebase.auth().signOut().then(function () {
+            // Sign-out successful.
+            USERNAME.delUSERNAME();
+            myApp.init();
+            location.reload(true);
+        }).catch(function (error) {
+            // An error happened.
+            USERNAME.delUSERNAME();
+            myApp.init();
+            location.reload(true);
+        });
+    },
+
     ui: {
         id: "mainLayout",
         view: "layout",
@@ -56,7 +71,7 @@ var myApp = {
                         icon: "fas fa-sign-out-alt",
                         label: "Logout",
                         autowidth: true,
-                        click: "logic.logout"
+                        click: "myApp.logout"
                     }
                 ]
             },
