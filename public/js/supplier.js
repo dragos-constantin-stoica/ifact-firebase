@@ -192,7 +192,7 @@ var supplier = {
 
                 {
                     view: "forminput",
-                    label: "Conturi",
+                    label: "Bank accounts",
                     body: {
                         rows: [{
                                 view: "list",
