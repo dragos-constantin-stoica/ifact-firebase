@@ -1,7 +1,7 @@
 <table>
   <tr>
     <td>
-    <img src="https://github.com/level33/ifact-firebase/blob/master/public/img/icon.png" alt="iFact Logo"></img>
+    <img src="https://github.com/level33/ifact-firebase/blob/main/public/img/icon.png" alt="iFact Logo"></img>
     </td>
     <td>
     <p align="right"><b>"Invoicing made simple"</b></p>
